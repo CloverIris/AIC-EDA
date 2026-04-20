@@ -149,6 +149,14 @@
                     </Canvas>
                 </ScrollViewer>
 
+                <!-- Software-rendered isometric view overlay -->
+                <Image x:Name="IsoImage"
+                       Stretch="None"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Top"
+                       Visibility="Collapsed"
+                       IsHitTestVisible="False"/>
+
                 <!-- Floating stats -->
                 <Border HorizontalAlignment="Left" VerticalAlignment="Bottom"
                         Margin="12" Padding="10,6"

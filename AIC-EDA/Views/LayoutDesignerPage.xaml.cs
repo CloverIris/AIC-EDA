@@ -1,3 +1,4 @@
+using AIC_EDA.Core;
 using AIC_EDA.Models;
 using AIC_EDA.ViewModels;
 using Microsoft.UI.Xaml;
@@ -53,6 +54,10 @@ namespace AIC_EDA.Views
         };
 
         private bool _isLoaded = false;
+
+        // Software renderer for isometric view
+        private SoftwareRenderer? _renderer;
+        private Microsoft.UI.Xaml.Media.Imaging.WriteableBitmap? _isoBitmap;
 
         public LayoutDesignerPage()
         {
@@ -111,6 +116,12 @@ namespace AIC_EDA.Views
                 DesignCanvas.Children.Clear();
                 UpdateCanvasSize();
 
+                if (_isIsometric)
+                {
+                    DrawIsometricSoftware();
+                    return;
+                }
+
                 // Dark background plate to separate grid from window background
                 var bgPlate = new Rectangle
                 {
@@ -128,6 +139,168 @@ namespace AIC_EDA.Views
                 System.Diagnostics.Debug.WriteLine($"[LayoutDesigner] Redraw error: {ex.Message}\n{ex.StackTrace}");
                 StatusTextBlock.Text = $"Render error: {ex.Message}";
                 FlashErrorWarning();
+            }
+        }
+
+        // ===== SOFTWARE ISOMETRIC RENDERER =====
+        private void DrawIsometricSoftware()
+        {
+            int renderW = (int)Math.Max(1, CanvasScrollViewer.ActualWidth);
+            int renderH = (int)Math.Max(1, CanvasScrollViewer.ActualHeight);
+
+            if (_renderer == null || _renderer.Width != renderW || _renderer.Height != renderH)
+            {
+                _renderer = new SoftwareRenderer(renderW, renderH);
+                _isoBitmap = new Microsoft.UI.Xaml.Media.Imaging.WriteableBitmap(renderW, renderH);
+                IsoImage.Source = _isoBitmap;
+                IsoImage.Width = renderW;
+                IsoImage.Height = renderH;
+            }
+
+            _renderer.Clear(Color.FromArgb(0xFF, 0x0A, 0x0A, 0x0A));
+
+            double cell = _gridCellPixels * _zoomFactor;
+            double isoW = cell;
+            double isoH = cell * 0.5;
+            double blockH = cell * 0.4;
+            double centerX = _panOffset.X + CanvasGridW * isoW * 0.5;
+            double originY = _panOffset.Y;
+
+            var (minGx, minGy, maxGx, maxGy) = GetGridBounds(padding: 8);
+
+            var gridColor = Color.FromArgb(0x18, 0xFF, 0xFF, 0xFF);
+            var majorGridColor = Color.FromArgb(0x30, 0xFF, 0xFF, 0xFF);
+            var borderColor = Color.FromArgb(0x80, 0xFF, 0xD6, 0x00);
+
+            int iMin1 = minGx - maxGy;
+            int iMax1 = maxGx - minGy;
+            int iMin2 = minGx + minGy;
+            int iMax2 = maxGx + maxGy;
+
+            // \\ direction grid lines
+            for (int i = iMin1; i <= iMax1; i++)
+            {
+                double x1 = centerX + i * isoW * 0.5;
+                double y1 = originY + Math.Max(0, -i) * isoH * 0.5;
+                double x2 = centerX + (i + CanvasGridH) * isoW * 0.5;
+                double y2 = originY + CanvasGridH * isoH * 0.5 + Math.Min(0, -i) * isoH * 0.5;
+                var c = (i % 5 == 0) ? majorGridColor : gridColor;
+                _renderer.DrawDashedLine((int)x1, (int)y1, (int)x2, (int)y2, c, 2, 4);
+            }
+
+            // // direction grid lines
+            for (int i = iMin2; i <= iMax2; i++)
+            {
+                double x1 = centerX + (i - CanvasGridH) * isoW * 0.5;
+                double y1 = originY + Math.Max(0, CanvasGridH - i) * isoH * 0.5;
+                double x2 = centerX + i * isoW * 0.5;
+                double y2 = originY + Math.Min(CanvasGridH, i) * isoH * 0.5;
+                var c = (i % 5 == 0) ? majorGridColor : gridColor;
+                _renderer.DrawDashedLine((int)x1, (int)y1, (int)x2, (int)y2, c, 2, 4);
+            }
+
+            // Border diamond
+            double bl = centerX + (minGx - maxGy) * isoW * 0.5;
+            double br = centerX + (maxGx - minGy) * isoW * 0.5;
+            double bt = originY + (minGx + minGy) * isoH * 0.5;
+            double bb = originY + (maxGx + maxGy) * isoH * 0.5;
+            double bmx = (bl + br) * 0.5;
+            double bmy = (bt + bb) * 0.5;
+
+            _renderer.DrawLine((int)bmx, (int)bt, (int)br, (int)bmy, borderColor);
+            _renderer.DrawLine((int)br, (int)bmy, (int)bmx, (int)bb, borderColor);
+            _renderer.DrawLine((int)bmx, (int)bb, (int)bl, (int)bmy, borderColor);
+            _renderer.DrawLine((int)bl, (int)bmy, (int)bmx, (int)bt, borderColor);
+
+            // Connections
+            foreach (var conn in ViewModel.Layout.Connections)
+            {
+                var source = ViewModel.Layout.Machines.FirstOrDefault(m => m.Id == conn.SourceId);
+                var target = ViewModel.Layout.Machines.FirstOrDefault(m => m.Id == conn.TargetId);
+                if (source == null || target == null) continue;
+
+                double sx = centerX + (source.GridX - source.GridY) * isoW * 0.5;
+                double sy = originY + (source.GridX + source.GridY) * isoH * 0.5;
+                double tx = centerX + (target.GridX - target.GridY) * isoW * 0.5;
+                double ty = originY + (target.GridX + target.GridY) * isoH * 0.5;
+
+                var c = conn.Type == ConnectionType.Pipe
+                    ? Color.FromArgb(0xAA, 0x1E, 0x90, 0xFF)
+                    : Color.FromArgb(0xAA, 0xFF, 0xD6, 0x00);
+                _renderer.DrawDashedLine((int)sx, (int)sy, (int)tx, (int)ty, c, 4, 2);
+            }
+
+            // Machines (Painter's algorithm)
+            var sorted = ViewModel.Layout.Machines.OrderBy(m => m.GridX + m.GridY).ToList();
+            foreach (var machine in sorted)
+            {
+                bool isSelected = ViewModel.SelectedMachine?.Id == machine.Id;
+                var color = CategoryColors.GetValueOrDefault(machine.Category, Colors.Gray);
+
+                double baseIsoX = (machine.GridX - machine.GridY) * isoW * 0.5;
+                double baseIsoY = (machine.GridX + machine.GridY) * isoH * 0.5;
+                double sx = centerX + baseIsoX;
+                double sy = originY + baseIsoY;
+
+                double fw = machine.GridWidth * isoW;
+                double fh = machine.GridDepth * isoH;
+
+                var topC = Color.FromArgb(0xEE,
+                    (byte)Math.Min(255, color.R + 30),
+                    (byte)Math.Min(255, color.G + 30),
+                    (byte)Math.Min(255, color.B + 30));
+                var leftC = Color.FromArgb(0xDD,
+                    (byte)Math.Max(0, color.R - 20),
+                    (byte)Math.Max(0, color.G - 20),
+                    (byte)Math.Max(0, color.B - 20));
+                var rightC = Color.FromArgb(0xCC,
+                    (byte)Math.Max(0, color.R - 40),
+                    (byte)Math.Max(0, color.G - 40),
+                    (byte)Math.Max(0, color.B - 40));
+
+                // Left face
+                _renderer.DrawQuad(
+                    (int)(sx - fw * 0.5), (int)(sy - fh * 0.5),
+                    (int)sx, (int)(sy - blockH - fh * 0.5),
+                    (int)sx, (int)(sy - blockH + fh * 0.5),
+                    (int)(sx - fw * 0.5), (int)(sy + fh * 0.5),
+                    leftC);
+
+                // Right face
+                _renderer.DrawQuad(
+                    (int)(sx + fw * 0.5), (int)(sy - fh * 0.5),
+                    (int)sx, (int)(sy - blockH - fh * 0.5),
+                    (int)sx, (int)(sy - blockH + fh * 0.5),
+                    (int)(sx + fw * 0.5), (int)(sy + fh * 0.5),
+                    rightC);
+
+                // Top face
+                _renderer.DrawQuad(
+                    (int)sx, (int)(sy - blockH - fh * 0.5),
+                    (int)(sx + fw * 0.5), (int)(sy - blockH),
+                    (int)sx, (int)(sy - blockH + fh * 0.5),
+                    (int)(sx - fw * 0.5), (int)(sy - blockH),
+                    topC);
+
+                // Selection outline
+                if (isSelected)
+                {
+                    var sel = Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF);
+                    int off = 2;
+                    _renderer.DrawLine((int)sx, (int)(sy - blockH - fh * 0.5 - off), (int)(sx + fw * 0.5 + off), (int)(sy - blockH - off), sel);
+                    _renderer.DrawLine((int)(sx + fw * 0.5 + off), (int)(sy - blockH - off), (int)sx, (int)(sy - blockH + fh * 0.5 + off), sel);
+                    _renderer.DrawLine((int)sx, (int)(sy - blockH + fh * 0.5 + off), (int)(sx - fw * 0.5 - off), (int)(sy - blockH - off), sel);
+                    _renderer.DrawLine((int)(sx - fw * 0.5 - off), (int)(sy - blockH - off), (int)sx, (int)(sy - blockH - fh * 0.5 - off), sel);
+                }
+            }
+
+            // Copy to WriteableBitmap
+            if (_isoBitmap != null && _renderer != null)
+            {
+                using var stream = System.Runtime.InteropServices.WindowsRuntime.WindowsRuntimeBufferExtensions.AsStream(_isoBitmap.PixelBuffer);
+                stream.Write(_renderer.Pixels, 0, _renderer.Pixels.Length);
+                stream.Flush();
+                _isoBitmap.Invalidate();
             }
         }
 
@@ -931,6 +1104,7 @@ namespace AIC_EDA.Views
         private void IsometricToggle_Click(object sender, RoutedEventArgs e)
         {
             _isIsometric = IsometricToggle.IsChecked == true;
+            IsoImage.Visibility = _isIsometric ? Visibility.Visible : Visibility.Collapsed;
             RedrawCanvas();
         }
 
