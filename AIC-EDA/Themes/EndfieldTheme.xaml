@@ -135,7 +135,7 @@
 
     <!-- ========== BUTTON STYLES ========== -->
     <!-- Primary Accent Button -->
-    <Style x:Key="EndfieldAccentButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
+    <Style x:Key="EndfieldAccentButtonStyle" TargetType="Button">
         <Setter Property="Background" Value="{StaticResource AccentGreenBrush}"/>
         <Setter Property="Foreground" Value="{StaticResource SurfaceDarkColor}"/>
         <Setter Property="BorderBrush" Value="{StaticResource AccentGreenBrush}"/>
@@ -147,7 +147,7 @@
     </Style>
 
     <!-- Secondary Outline Button -->
-    <Style x:Key="EndfieldOutlineButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
+    <Style x:Key="EndfieldOutlineButtonStyle" TargetType="Button">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
         <Setter Property="BorderBrush" Value="{StaticResource BorderDefaultBrush}"/>
@@ -157,7 +157,7 @@
     </Style>
 
     <!-- Ghost Button (text only with arrow) -->
-    <Style x:Key="EndfieldGhostButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
+    <Style x:Key="EndfieldGhostButtonStyle" TargetType="Button">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Foreground" Value="{StaticResource AccentGreenBrush}"/>
         <Setter Property="BorderThickness" Value="0"/>
@@ -196,7 +196,7 @@
     </Style>
 
     <!-- ========== LIST VIEW ITEM CONTAINER ========== -->
-    <Style x:Key="EndfieldListViewItemStyle" TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
+    <Style x:Key="EndfieldListViewItemStyle" TargetType="ListViewItem">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Margin" Value="0,2"/>
         <Setter Property="Padding" Value="12,8"/>
@@ -204,7 +204,7 @@
     </Style>
 
     <!-- ========== TEXT BOX STYLES ========== -->
-    <Style x:Key="EndfieldTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource DefaultTextBoxStyle}">
+    <Style x:Key="EndfieldTextBoxStyle" TargetType="TextBox">
         <Setter Property="Background" Value="{StaticResource SurfaceElevatedBrush}"/>
         <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
         <Setter Property="BorderBrush" Value="{StaticResource BorderDefaultBrush}"/>
@@ -215,7 +215,7 @@
     </Style>
 
     <!-- ========== COMBO BOX STYLES ========== -->
-    <Style x:Key="EndfieldComboBoxStyle" TargetType="ComboBox" BasedOn="{StaticResource DefaultComboBoxStyle}">
+    <Style x:Key="EndfieldComboBoxStyle" TargetType="ComboBox">
         <Setter Property="Background" Value="{StaticResource SurfaceElevatedBrush}"/>
         <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
         <Setter Property="BorderBrush" Value="{StaticResource BorderDefaultBrush}"/>
@@ -225,7 +225,7 @@
     </Style>
 
     <!-- ========== NUMBER BOX STYLES ========== -->
-    <Style x:Key="EndfieldNumberBoxStyle" TargetType="muxc:NumberBox" BasedOn="{StaticResource DefaultNumberBoxStyle}">
+    <Style x:Key="EndfieldNumberBoxStyle" TargetType="muxc:NumberBox">
         <Setter Property="Background" Value="{StaticResource SurfaceElevatedBrush}"/>
         <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
         <Setter Property="BorderBrush" Value="{StaticResource BorderDefaultBrush}"/>
@@ -234,7 +234,7 @@
     </Style>
 
     <!-- ========== INFO BAR STYLES ========== -->
-    <Style x:Key="EndfieldInfoBarStyle" TargetType="muxc:InfoBar" BasedOn="{StaticResource DefaultInfoBarStyle}">
+    <Style x:Key="EndfieldInfoBarStyle" TargetType="muxc:InfoBar">
         <Setter Property="Background" Value="{StaticResource SurfaceElevatedBrush}"/>
         <Setter Property="BorderBrush" Value="{StaticResource BorderDefaultBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
@@ -242,7 +242,7 @@
     </Style>
 
     <!-- ========== TOGGLE SWITCH ========== -->
-    <Style x:Key="EndfieldToggleSwitchStyle" TargetType="ToggleSwitch" BasedOn="{StaticResource DefaultToggleSwitchStyle}">
+    <Style x:Key="EndfieldToggleSwitchStyle" TargetType="ToggleSwitch">
         <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
     </Style>
 
