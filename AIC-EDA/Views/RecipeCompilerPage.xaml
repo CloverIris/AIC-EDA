@@ -14,41 +14,52 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="40"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="80"/>
-                    <ColumnDefinition Width="100"/>
-                    <ColumnDefinition Width="120"/>
+                    <ColumnDefinition Width="70"/>
+                    <ColumnDefinition Width="90"/>
+                    <ColumnDefinition Width="110"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="{Binding Layer}" FontWeight="Bold" VerticalAlignment="Center"/>
+                <!-- Layer badge -->
+                <Border Grid.Column="0" Width="28" Height="28" CornerRadius="4"
+                        Background="{StaticResource SurfaceElevatedBrush}"
+                        BorderBrush="{StaticResource BorderDefaultBrush}"
+                        BorderThickness="1"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+                    <TextBlock Text="{Binding Layer}" FontWeight="Bold" FontSize="12" Foreground="{StaticResource AccentCyanBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
                 <StackPanel Grid.Column="1" Spacing="2">
-                    <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" FontSize="13"/>
-                    <TextBlock Text="{Binding RecipeName}" FontSize="11" Opacity="0.6"/>
-                    <TextBlock Text="{Binding Inputs}" FontSize="10" Opacity="0.5"/>
+                    <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" FontSize="13" Foreground="{StaticResource TextPrimaryBrush}"/>
+                    <TextBlock Text="{Binding RecipeName}" FontSize="10" Foreground="{StaticResource TextTertiaryBrush}"/>
+                    <TextBlock Text="{Binding Inputs}" FontSize="10" Foreground="{StaticResource TextDisabledBrush}"/>
                 </StackPanel>
-                <TextBlock Grid.Column="2" Text="{Binding Count}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <TextBlock Text="{Binding PowerConsumption}" FontSize="11"/>
-                    <TextBlock Text="kW" FontSize="11" Opacity="0.7"/>
+                <TextBlock Grid.Column="2" Text="{Binding Count}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="13" Foreground="{StaticResource TextPrimaryBrush}" FontWeight="SemiBold"/>
+                <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="2">
+                    <TextBlock Text="{Binding PowerConsumption}" FontSize="11" Foreground="{StaticResource AccentOrangeBrush}"/>
+                    <TextBlock Text="kW" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}"/>
                 </StackPanel>
-                <TextBlock Grid.Column="4" Text="{Binding Position}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="11" Opacity="0.6"/>
+                <TextBlock Grid.Column="4" Text="{Binding Position}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}"/>
             </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="RawMaterialTemplate">
-            <Grid Padding="8">
+            <Grid Padding="10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="120"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="{Binding ItemName}" VerticalAlignment="Center"/>
-                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                    <TextBlock Text="{Binding RatePerMinute}" FontSize="11"/>
-                    <TextBlock Text="/min" FontSize="11" Opacity="0.7"/>
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                    <Ellipse Width="8" Height="8" Fill="{StaticResource AccentYellowBrush}" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding ItemName}" VerticalAlignment="Center" Foreground="{StaticResource TextPrimaryBrush}"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right" Spacing="2">
+                    <TextBlock Text="{Binding RatePerMinute}" FontSize="13" Foreground="{StaticResource AccentYellowBrush}" FontWeight="SemiBold"/>
+                    <TextBlock Text="/min" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}"/>
                 </StackPanel>
             </Grid>
         </DataTemplate>
     </Page.Resources>
 
-    <Grid Padding="16">
+    <Grid Padding="24" Background="{StaticResource SurfaceDarkBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -56,13 +67,15 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- 标题 -->
-        <StackPanel Grid.Row="0" Spacing="8" Margin="0,0,0,16">
-            <TextBlock Text="Recipe Compiler (配方综合器)" Style="{StaticResource TitleLargeTextBlockStyle}"/>
-            <TextBlock Text="从目标产物反向构建生产树，计算最优设备配置" Opacity="0.7"/>
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Spacing="8" Margin="0,0,0,20">
+            <TextBlock Text="[ RTL_SYNTHESIS ]" Style="{StaticResource BracketTagStyle}"/>
+            <TextBlock Text="Recipe Compiler" Style="{StaticResource SectionTitleStyle}"/>
+            <TextBlock Text="从目标产物反向构建生产树，计算最优设备配置与产线平衡" FontSize="13" Foreground="{StaticResource TextSecondaryBrush}"/>
+            <Border Height="1" Background="{StaticResource BorderDefaultBrush}" Margin="0,8,0,0"/>
         </StackPanel>
 
-        <!-- 控制面板 -->
+        <!-- Control Panel -->
         <Grid Grid.Row="1" Margin="0,0,0,16">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -72,16 +85,18 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <ComboBox Grid.Column="0" 
-                      Header="目标产物" 
-                      PlaceholderText="选择要生产的物品"
+            <ComboBox Grid.Column="0"
+                      Style="{StaticResource EndfieldComboBoxStyle}"
+                      Header="TARGET PRODUCT"
+                      PlaceholderText="选择目标产物"
                       ItemsSource="{x:Bind ViewModel.FinalProducts}"
                       SelectedItem="{x:Bind ViewModel.SelectedTarget, Mode=TwoWay}"
                       DisplayMemberPath="Name"
                       Margin="0,0,12,0"/>
 
             <NumberBox Grid.Column="1"
-                       Header="目标产量 (/min)"
+                       Style="{StaticResource EndfieldNumberBoxStyle}"
+                       Header="TARGET RATE (/min)"
                        Value="{x:Bind ViewModel.TargetRate, Mode=TwoWay}"
                        Minimum="1"
                        Maximum="10000"
@@ -89,76 +104,112 @@
                        Margin="0,0,12,0"/>
 
             <Button Grid.Column="2"
-                    Content="编译 (Compile)"
+                    Content="COMPILE"
                     Command="{x:Bind ViewModel.CompileCommand}"
-                    Style="{StaticResource AccentButtonStyle}"
+                    Style="{StaticResource EndfieldAccentButtonStyle}"
                     VerticalAlignment="Bottom"
                     Margin="0,0,8,0"/>
 
             <Button Grid.Column="3"
-                    Content="优化布局"
+                    Content="Optimize"
                     Command="{x:Bind ViewModel.OptimizeLayoutCommand}"
+                    Style="{StaticResource EndfieldOutlineButtonStyle}"
                     VerticalAlignment="Bottom"
                     Margin="0,0,8,0"/>
 
             <Button Grid.Column="4"
-                    Content="检测瓶颈"
+                    Content="Bottleneck"
                     Command="{x:Bind ViewModel.DetectBottlenecksCommand}"
+                    Style="{StaticResource EndfieldOutlineButtonStyle}"
                     VerticalAlignment="Bottom"/>
         </Grid>
 
-        <!-- 状态栏 -->
-        <InfoBar Grid.Row="2"
-                 Message="{x:Bind ViewModel.StatusMessage, Mode=OneWay}"
-                 IsOpen="True"
-                 Severity="Informational"
-                 Margin="0,0,0,12"/>
+        <!-- Metrics Cards -->
+        <Grid Grid.Row="2" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-        <!-- 结果区 -->
+            <Border Grid.Column="0" Style="{StaticResource EndfieldCardStyle}" Padding="16" Margin="0,0,8,0">
+                <StackPanel Spacing="4">
+                    <TextBlock Text="TOTAL DEVICES" Style="{StaticResource CaptionLabelStyle}"/>
+                    <TextBlock Text="{x:Bind ViewModel.TotalMachines, Mode=OneWay}" Style="{StaticResource MetricNumberStyle}" Foreground="{StaticResource AccentCyanBrush}"/>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="1" Style="{StaticResource EndfieldCardStyle}" Padding="16" Margin="4,0,4,0">
+                <StackPanel Spacing="4">
+                    <TextBlock Text="TOTAL POWER" Style="{StaticResource CaptionLabelStyle}"/>
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <TextBlock Text="{x:Bind ViewModel.TotalPower, Mode=OneWay}" Style="{StaticResource MetricNumberStyle}" Foreground="{StaticResource AccentOrangeBrush}"/>
+                        <TextBlock Text="kW" FontSize="14" Foreground="{StaticResource TextTertiaryBrush}" VerticalAlignment="Bottom" Margin="0,0,0,6"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="2" Style="{StaticResource EndfieldCardStyle}" Padding="16" Margin="8,0,0,0">
+                <StackPanel Spacing="4">
+                    <TextBlock Text="LAYERS" Style="{StaticResource CaptionLabelStyle}"/>
+                    <TextBlock Text="{x:Bind ViewModel.TotalLayers, Mode=OneWay}" Style="{StaticResource MetricNumberStyle}" Foreground="{StaticResource AccentGreenBrush}"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- Status & Results -->
         <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- 左侧：节点列表 -->
+            <!-- Left: Node List -->
             <Grid Grid.Column="0" Margin="0,0,12,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                
-                <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="16" Margin="0,0,0,8">
-                    <TextBlock Text="生产节点" Style="{StaticResource SubtitleTextBlockStyle}"/>
-                    <TextBlock VerticalAlignment="Center" Opacity="0.7">
-                        <Run Text="总设备: "/><Run Text="{x:Bind ViewModel.TotalMachines, Mode=OneWay}"/>
-                    </TextBlock>
-                    <TextBlock VerticalAlignment="Center" Opacity="0.7">
-                        <Run Text="总功率: "/><Run Text="{x:Bind ViewModel.TotalPower, Mode=OneWay}"/><Run Text="kW"/>
-                    </TextBlock>
-                </StackPanel>
 
-                <ListView Grid.Row="1"
-                          ItemsSource="{x:Bind ViewModel.Nodes}"
-                          ItemTemplate="{StaticResource NodeTemplate}"
-                          BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                          BorderThickness="1"
-                          CornerRadius="8"/>
+                <Border Grid.Row="0" Background="{StaticResource SurfaceElevatedBrush}" Padding="12,8" CornerRadius="4,4,0,0">
+                    <StackPanel Orientation="Horizontal" Spacing="16">
+                        <TextBlock Text="PRODUCTION NODES" Style="{StaticResource CaptionLabelStyle}" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
+                            <TextBlock VerticalAlignment="Center" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}">
+                                <Run Text="Devices: "/><Run Text="{x:Bind ViewModel.TotalMachines, Mode=OneWay}" Foreground="{StaticResource TextPrimaryBrush}"/>
+                            </TextBlock>
+                            <TextBlock VerticalAlignment="Center" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}">
+                                <Run Text="Power: "/><Run Text="{x:Bind ViewModel.TotalPower, Mode=OneWay}" Foreground="{StaticResource AccentOrangeBrush}"/><Run Text=" kW"/>
+                            </TextBlock>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Row="1" Style="{StaticResource EndfieldCardStyle}" CornerRadius="0,0,4,4" BorderThickness="1,0,1,1">
+                    <ListView ItemsSource="{x:Bind ViewModel.Nodes}"
+                              ItemTemplate="{StaticResource NodeTemplate}"
+                              ItemContainerStyle="{StaticResource EndfieldListViewItemStyle}"
+                              Background="Transparent"
+                              BorderThickness="0"/>
+                </Border>
             </Grid>
 
-            <!-- 右侧：原始资源 -->
+            <!-- Right: Raw Materials -->
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <TextBlock Text="原始资源需求" Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,0,0,8"/>
-                <ListView Grid.Row="1"
-                          ItemsSource="{x:Bind ViewModel.RawMaterials}"
-                          ItemTemplate="{StaticResource RawMaterialTemplate}"
-                          BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                          BorderThickness="1"
-                          CornerRadius="8"/>
+                <Border Grid.Row="0" Background="{StaticResource SurfaceElevatedBrush}" Padding="12,8" CornerRadius="4,4,0,0">
+                    <TextBlock Text="RAW MATERIALS" Style="{StaticResource CaptionLabelStyle}" VerticalAlignment="Center"/>
+                </Border>
+                <Border Grid.Row="1" Style="{StaticResource EndfieldCardStyle}" CornerRadius="0,0,4,4" BorderThickness="1,0,1,1">
+                    <ListView ItemsSource="{x:Bind ViewModel.RawMaterials}"
+                              ItemTemplate="{StaticResource RawMaterialTemplate}"
+                              ItemContainerStyle="{StaticResource EndfieldListViewItemStyle}"
+                              Background="Transparent"
+                              BorderThickness="0"/>
+                </Border>
             </Grid>
         </Grid>
     </Grid>

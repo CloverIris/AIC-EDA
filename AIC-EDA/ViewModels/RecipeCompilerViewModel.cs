@@ -50,6 +50,9 @@ namespace AIC_EDA.ViewModels
         [ObservableProperty]
         private ObservableCollection<RawMaterialRequirement> _rawMaterials = new();
 
+        [ObservableProperty]
+        private int _totalLayers;
+
         public RecipeCompilerViewModel()
         {
             _db = RecipeDatabaseService.Instance;
@@ -143,6 +146,7 @@ namespace AIC_EDA.ViewModels
             // 统计
             TotalPower = graph.TotalPowerConsumption;
             TotalMachines = graph.TotalMachineCount;
+            TotalLayers = graph.Nodes.Count > 0 ? graph.Nodes.Max(n => n.Layer) + 1 : 0;
 
             // 原始资源
             var rawList = graph.RawMaterialRequirements.Select(r => new RawMaterialRequirement

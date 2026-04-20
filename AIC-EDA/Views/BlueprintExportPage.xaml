@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Padding="16">
+    <Grid Padding="24" Background="{StaticResource SurfaceDarkBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -16,77 +16,117 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- 标题 -->
-        <StackPanel Grid.Row="0" Spacing="8" Margin="0,0,0,16">
-            <TextBlock Text="Tape-Deploy (部署流片)" Style="{StaticResource TitleLargeTextBlockStyle}"/>
-            <TextBlock Text="蓝图编解码与导出 - 类比IC设计的GDSII交付" Opacity="0.7"/>
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Spacing="8" Margin="0,0,0,20">
+            <TextBlock Text="[ TAPE_DEPLOY ]" Style="{StaticResource BracketTagStyle}"/>
+            <TextBlock Text="Blueprint Export" Style="{StaticResource SectionTitleStyle}"/>
+            <TextBlock Text="蓝图编解码与导出 — 类比IC设计的 GDSII 交付流程" FontSize="13" Foreground="{StaticResource TextSecondaryBrush}"/>
+            <Border Height="1" Background="{StaticResource BorderDefaultBrush}" Margin="0,8,0,0"/>
         </StackPanel>
 
-        <!-- 操作区 -->
+        <!-- Action Bar -->
         <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="12" Margin="0,0,0,16">
-            <Button x:Name="ExportBlueprintBtn" Content="导出蓝图" Click="ExportBlueprint_Click" Style="{StaticResource AccentButtonStyle}"/>
-            <Button x:Name="ExportJsonBtn" Content="导出JSON" Click="ExportJson_Click"/>
-            <Button x:Name="CopyToClipboardBtn" Content="复制到剪贴板" Click="CopyToClipboard_Click"/>
+            <Button x:Name="ExportBlueprintBtn" Content="EXPORT BLUEPRINT" Click="ExportBlueprint_Click" Style="{StaticResource EndfieldAccentButtonStyle}"/>
+            <Button x:Name="ExportJsonBtn" Content="Export JSON" Click="ExportJson_Click" Style="{StaticResource EndfieldOutlineButtonStyle}"/>
+            <Button x:Name="CopyToClipboardBtn" Content="Copy to Clipboard" Click="CopyToClipboard_Click" Style="{StaticResource EndfieldOutlineButtonStyle}"/>
         </StackPanel>
 
-        <!-- 状态 -->
+        <!-- Status -->
         <InfoBar x:Name="StatusInfoBar"
                  Grid.Row="2"
                  IsOpen="False"
-                 Margin="0,0,0,12"/>
+                 Margin="0,0,0,12"
+                 Style="{StaticResource EndfieldInfoBarStyle}"/>
 
-        <!-- 预览区 -->
+        <!-- Content -->
         <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <ScrollViewer Grid.Column="0" Margin="0,0,8,0">
-                <StackPanel Spacing="8">
-                    <TextBlock Text="蓝图字符串" Style="{StaticResource SubtitleTextBlockStyle}"/>
-                    <TextBox x:Name="BlueprintTextBox"
-                             IsReadOnly="True"
-                             TextWrapping="Wrap"
-                             AcceptsReturn="True"
-                             MinHeight="200"
-                             FontFamily="Consolas"
-                             FontSize="11"/>
-                </StackPanel>
-            </ScrollViewer>
+            <!-- Left: Blueprint String -->
+            <Grid Grid.Column="0" Margin="0,0,8,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Border Background="{StaticResource SurfaceElevatedBrush}" Padding="12,8" CornerRadius="4,4,0,0">
+                    <TextBlock Text="BLUEPRINT STRING" Style="{StaticResource CaptionLabelStyle}" VerticalAlignment="Center"/>
+                </Border>
+                <Border Grid.Row="1" Style="{StaticResource EndfieldCardStyle}" CornerRadius="0,0,4,4" BorderThickness="1,0,1,1">
+                    <ScrollViewer Padding="12">
+                        <TextBox x:Name="BlueprintTextBox"
+                                 IsReadOnly="True"
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="True"
+                                 Background="{StaticResource SurfaceDarkBrush}"
+                                 Foreground="{StaticResource AccentGreenBrush}"
+                                 BorderThickness="0"
+                                 FontFamily="Consolas"
+                                 FontSize="11"
+                                 MinHeight="300"/>
+                    </ScrollViewer>
+                </Border>
+            </Grid>
 
-            <ScrollViewer Grid.Column="1" Margin="8,0,0,0">
-                <StackPanel Spacing="8">
-                    <TextBlock Text="统计信息" Style="{StaticResource SubtitleTextBlockStyle}"/>
-                    <Grid BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" 
-                          BorderThickness="1" 
-                          CornerRadius="8"
-                          Padding="12">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
+            <!-- Right: Statistics -->
+            <Grid Grid.Column="1" Margin="8,0,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
-                        <TextBlock Text="目标产物" Opacity="0.6"/>
-                        <TextBlock x:Name="TargetItemText" Grid.Column="1" Text="-"/>
+                <Border Grid.Row="0" Background="{StaticResource SurfaceElevatedBrush}" Padding="12,8" CornerRadius="4,4,0,0">
+                    <TextBlock Text="STATISTICS" Style="{StaticResource CaptionLabelStyle}" VerticalAlignment="Center"/>
+                </Border>
+                <Border Grid.Row="0" Grid.RowSpan="5" Style="{StaticResource EndfieldCardStyle}" CornerRadius="0,0,4,4" BorderThickness="1,0,1,1" Margin="0,0,0,0"/>
 
-                        <TextBlock Grid.Row="1" Text="目标速率" Opacity="0.6"/>
-                        <TextBlock x:Name="TargetRateText" Grid.Row="1" Grid.Column="1" Text="-"/>
+                <Grid Grid.Row="1" Padding="16,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="TARGET ITEM" Style="{StaticResource CaptionLabelStyle}" Grid.Column="0"/>
+                    <TextBlock x:Name="TargetItemText" Grid.Column="1" Text="-" FontSize="14" Foreground="{StaticResource TextPrimaryBrush}" FontWeight="SemiBold" HorizontalAlignment="Right"/>
+                </Grid>
+                <Border Grid.Row="1" Height="1" Background="{StaticResource BorderDefaultBrush}" Margin="16,0"/>
 
-                        <TextBlock Grid.Row="2" Text="设备数量" Opacity="0.6"/>
-                        <TextBlock x:Name="MachineCountText" Grid.Row="2" Grid.Column="1" Text="-"/>
+                <Grid Grid.Row="2" Padding="16,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="TARGET RATE" Style="{StaticResource CaptionLabelStyle}" Grid.Column="0"/>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="4">
+                        <TextBlock x:Name="TargetRateText" Text="-" FontSize="14" Foreground="{StaticResource AccentCyanBrush}" FontWeight="SemiBold"/>
+                        <TextBlock Text="/min" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}" VerticalAlignment="Bottom" Margin="0,0,0,2"/>
+                    </StackPanel>
+                </Grid>
+                <Border Grid.Row="2" Height="1" Background="{StaticResource BorderDefaultBrush}" Margin="16,0"/>
 
-                        <TextBlock Grid.Row="3" Text="传送带数量" Opacity="0.6"/>
-                        <TextBlock x:Name="BeltCountText" Grid.Row="3" Grid.Column="1" Text="-"/>
-                    </Grid>
-                </StackPanel>
-            </ScrollViewer>
+                <Grid Grid.Row="3" Padding="16,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="DEVICES" Style="{StaticResource CaptionLabelStyle}" Grid.Column="0"/>
+                    <TextBlock x:Name="MachineCountText" Grid.Column="1" Text="-" FontSize="14" Foreground="{StaticResource AccentGreenBrush}" FontWeight="SemiBold" HorizontalAlignment="Right"/>
+                </Grid>
+                <Border Grid.Row="3" Height="1" Background="{StaticResource BorderDefaultBrush}" Margin="16,0"/>
+
+                <Grid Grid.Row="4" Padding="16,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="CONVEYORS" Style="{StaticResource CaptionLabelStyle}" Grid.Column="0"/>
+                    <TextBlock x:Name="BeltCountText" Grid.Column="1" Text="-" FontSize="14" Foreground="{StaticResource AccentYellowBrush}" FontWeight="SemiBold" HorizontalAlignment="Right"/>
+                </Grid>
+            </Grid>
         </Grid>
     </Grid>
 </Page>

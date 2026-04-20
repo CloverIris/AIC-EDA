@@ -53,5 +53,19 @@ namespace AIC_EDA.Models
         }
 
         public override string ToString() => $"{Name} @ {Machine.GetDisplayName()}";
+
+        /// <summary>
+        /// Short summary of inputs for UI display
+        /// </summary>
+        public string InputSummary => Inputs.Count > 0
+            ? string.Join(", ", Inputs.Select(kv => $"{kv.Value:F0}x {kv.Key}"))
+            : "None";
+
+        /// <summary>
+        /// Short summary of outputs for UI display
+        /// </summary>
+        public string OutputSummary => Outputs.Count > 0
+            ? string.Join(", ", Outputs.Select(kv => $"{kv.Value:F0}x {kv.Key}"))
+            : "None";
     }
 }

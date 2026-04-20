@@ -8,48 +8,84 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Padding="16">
+    <Grid Padding="24" Background="{StaticResource SurfaceDarkBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- 标题 -->
+        <!-- Header -->
         <StackPanel Grid.Row="0" Spacing="8" Margin="0,0,0,16">
-            <TextBlock Text="FloorPlan-EF (布图规划器)" Style="{StaticResource TitleLargeTextBlockStyle}"/>
-            <TextBlock Text="2D/3D 工厂布局预览与优化" Opacity="0.7"/>
+            <TextBlock Text="[ FLOORPLAN_EF ]" Style="{StaticResource BracketTagStyle}"/>
+            <TextBlock Text="FloorPlan &amp; Place" Style="{StaticResource SectionTitleStyle}"/>
+            <TextBlock Text="2D/3D 工厂布局预览与优化 — 设备摆放、传送带路由、电力网络覆盖" FontSize="13" Foreground="{StaticResource TextSecondaryBrush}"/>
+            <Border Height="1" Background="{StaticResource BorderDefaultBrush}" Margin="0,8,0,0"/>
         </StackPanel>
 
-        <!-- 工具栏 -->
-        <CommandBar Grid.Row="1" DefaultLabelPosition="Right" Margin="0,0,0,12">
-            <AppBarButton Icon="Refresh" Label="重新布局" Click="RefreshLayout_Click"/>
-            <AppBarButton Icon="ZoomIn" Label="放大" Click="ZoomIn_Click"/>
-            <AppBarButton Icon="ZoomOut" Label="缩小" Click="ZoomOut_Click"/>
-            <AppBarSeparator/>
-            <AppBarToggleButton Icon="TwoPage" Label="显示连接" IsChecked="True" x:Name="ShowConnectionsToggle"/>
-            <AppBarToggleButton Icon="AllApps" Label="显示网格" IsChecked="True" x:Name="ShowGridToggle"/>
-        </CommandBar>
+        <!-- Floating Toolbar -->
+        <Grid Grid.Row="1" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
 
-        <!-- 画布区 -->
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="4"
+                        Background="{StaticResource SurfaceCardBrush}"
+                        BorderBrush="{StaticResource BorderDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Padding="4">
+                <Button Style="{StaticResource EndfieldGhostButtonStyle}" Padding="8,4" Click="RefreshLayout_Click" ToolTipService.ToolTip="重新布局">
+                    <FontIcon Glyph="&#xE72C;" FontSize="14" Foreground="{StaticResource TextSecondaryBrush}"/>
+                </Button>
+                <Button Style="{StaticResource EndfieldGhostButtonStyle}" Padding="8,4" Click="ZoomIn_Click" ToolTipService.ToolTip="放大">
+                    <FontIcon Glyph="&#xE8A3;" FontSize="14" Foreground="{StaticResource TextSecondaryBrush}"/>
+                </Button>
+                <Button Style="{StaticResource EndfieldGhostButtonStyle}" Padding="8,4" Click="ZoomOut_Click" ToolTipService.ToolTip="缩小">
+                    <FontIcon Glyph="&#xE71F;" FontSize="14" Foreground="{StaticResource TextSecondaryBrush}"/>
+                </Button>
+                <Border Width="1" Background="{StaticResource BorderDefaultBrush}" Margin="4,2"/>
+                <ToggleButton x:Name="ShowConnectionsToggle" IsChecked="True" Padding="8,4" Background="Transparent" BorderThickness="0" ToolTipService.ToolTip="显示连接">
+                    <FontIcon Glyph="&#xE8AB;" FontSize="14" Foreground="{StaticResource TextSecondaryBrush}"/>
+                </ToggleButton>
+                <ToggleButton x:Name="ShowGridToggle" IsChecked="True" Padding="8,4" Background="Transparent" BorderThickness="0" ToolTipService.ToolTip="显示网格">
+                    <FontIcon Glyph="&#xE80A;" FontSize="14" Foreground="{StaticResource TextSecondaryBrush}"/>
+                </ToggleButton>
+            </StackPanel>
+
+            <!-- Zoom level indicator -->
+            <TextBlock Grid.Column="2" x:Name="ZoomText" Text="100%" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}" VerticalAlignment="Center" FontFamily="Consolas"/>
+        </Grid>
+
+        <!-- Canvas Area -->
         <Border Grid.Row="2"
-                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderBrush="{StaticResource BorderDefaultBrush}"
                 BorderThickness="1"
-                CornerRadius="8"
-                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                CornerRadius="4"
+                Background="{StaticResource SurfaceCardBrush}">
             <Grid>
-                <Canvas x:Name="LayoutCanvas" 
+                <!-- Main Canvas -->
+                <Canvas x:Name="LayoutCanvas"
                         Background="Transparent"
                         PointerPressed="Canvas_PointerPressed"
                         PointerMoved="Canvas_PointerMoved"
                         PointerReleased="Canvas_PointerReleased"/>
-                
-                <TextBlock x:Name="PlaceholderText"
-                           Text="请先前往 Recipe Compiler 页面编译生产图"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           Opacity="0.5"
-                           FontSize="16"/>
+
+                <!-- Soft-rendered image (optional, for high-performance mode) -->
+                <Image x:Name="LayoutImage" Stretch="None" Visibility="Collapsed"/>
+
+                <!-- Placeholder -->
+                <StackPanel x:Name="PlaceholderPanel" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+                    <FontIcon Glyph="&#xE7BF;" FontSize="48" Foreground="{StaticResource TextDisabledBrush}"/>
+                    <TextBlock Text="请先前往 RTL Synthesis 页面编译生产图"
+                               FontSize="14"
+                               Foreground="{StaticResource TextDisabledBrush}"/>
+                    <TextBlock Text="Compile a production graph to visualize the factory layout"
+                               FontSize="11"
+                               Foreground="{StaticResource TextDisabledBrush}"/>
+                </StackPanel>
             </Grid>
         </Border>
     </Grid>

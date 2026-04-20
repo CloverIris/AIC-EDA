@@ -11,71 +11,108 @@
     <Page.Resources>
         <DataTemplate x:Key="ItemTemplate">
             <Grid Padding="8">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="14"/>
-                <TextBlock Grid.Row="1" Text="{Binding NameEN}" FontSize="11" Opacity="0.6"/>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <!-- Category color indicator -->
+                <Border Grid.Column="0" Width="4" Height="32" CornerRadius="2" Margin="0,0,8,0">
+                    <Border.Background>
+                        <SolidColorBrush Color="{Binding CategoryColor}"/>
+                    </Border.Background>
+                </Border>
+                <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="13" Foreground="{StaticResource TextPrimaryBrush}"/>
+                    <TextBlock Text="{Binding NameEN}" FontSize="10" Foreground="{StaticResource TextTertiaryBrush}"/>
+                </StackPanel>
             </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="RecipeTemplate">
-            <Grid Padding="8">
+            <Grid Padding="10">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="13"/>
-                <TextBlock Grid.Row="1" Text="{Binding Machine}" FontSize="11" Opacity="0.7"/>
-                <StackPanel Grid.Row="2" Orientation="Horizontal" Opacity="0.5">
-                    <TextBlock Text="{Binding Duration}" FontSize="11"/>
-                    <TextBlock Text="s" FontSize="11"/>
+                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="13" Foreground="{StaticResource TextPrimaryBrush}"/>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="8" Margin="0,2,0,0">
+                    <TextBlock Text="{Binding Machine}" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+                    <TextBlock FontSize="11" Foreground="{StaticResource TextTertiaryBrush}">
+                        <Run Text="("/><Run Text="{Binding Duration}"/><Run Text="s)"/>
+                    </TextBlock>
+                </StackPanel>
+                <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="12" Margin="0,4,0,0">
+                    <TextBlock FontSize="10" Foreground="{StaticResource AccentCyanBrush}">
+                        <Run Text="In: "/><Run Text="{Binding InputSummary}"/>
+                    </TextBlock>
+                    <TextBlock FontSize="10" Foreground="{StaticResource AccentGreenBrush}">
+                        <Run Text="Out: "/><Run Text="{Binding OutputSummary}"/>
+                    </TextBlock>
                 </StackPanel>
             </Grid>
         </DataTemplate>
     </Page.Resources>
 
-    <Grid Padding="16">
+    <Grid Padding="24" Background="{StaticResource SurfaceDarkBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- 标题和搜索 -->
-        <StackPanel Grid.Row="0" Spacing="12" Margin="0,0,0,16">
-            <TextBlock Text="配方浏览器 (Recipe Browser)" Style="{StaticResource TitleLargeTextBlockStyle}"/>
-            <TextBlock Text="浏览所有配方和物品，查看生产链关系" Opacity="0.7"/>
-            <TextBox PlaceholderText="搜索配方或物品..." 
-                     Text="{x:Bind ViewModel.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                     Width="300" HorizontalAlignment="Left"/>
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Spacing="8" Margin="0,0,0,20">
+            <TextBlock Text="[ RECIPE_BROWSER ]" Style="{StaticResource BracketTagStyle}"/>
+            <TextBlock Text="配方浏览器" Style="{StaticResource SectionTitleStyle}"/>
+            <TextBlock Text="浏览所有配方和物品，查看生产链上下游关系" FontSize="13" Foreground="{StaticResource TextSecondaryBrush}"/>
+            <Border Height="1" Background="{StaticResource BorderDefaultBrush}" Margin="0,8,0,0"/>
         </StackPanel>
 
-        <!-- 内容区 -->
+        <!-- Content -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="280"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- 左侧：物品列表 -->
-            <Grid Grid.Column="0" Margin="0,0,12,0">
+            <!-- Left: Item List -->
+            <Grid Grid.Column="0" Margin="0,0,16,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <TextBlock Text="物品列表" Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,0,0,8"/>
-                <ListView Grid.Row="1"
-                          ItemsSource="{x:Bind ViewModel.Items}"
-                          SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
-                          ItemTemplate="{StaticResource ItemTemplate}"
-                          BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                          BorderThickness="1"
-                          CornerRadius="8"/>
+
+                <TextBox Grid.Row="0"
+                         Style="{StaticResource EndfieldTextBoxStyle}"
+                         PlaceholderText="搜索配方或物品..."
+                         Text="{x:Bind ViewModel.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="0,0,0,12">
+                    <TextBox.Header>
+                        <TextBlock Text="SEARCH" Style="{StaticResource CaptionLabelStyle}" Margin="0,0,0,4"/>
+                    </TextBox.Header>
+                </TextBox>
+
+                <Border Grid.Row="1" Style="{StaticResource EndfieldCardStyle}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Border Background="{StaticResource SurfaceElevatedBrush}" Padding="12,8" CornerRadius="4,4,0,0">
+                            <TextBlock Text="ITEMS" Style="{StaticResource CaptionLabelStyle}" VerticalAlignment="Center"/>
+                        </Border>
+                        <ListView Grid.Row="1"
+                                  ItemsSource="{x:Bind ViewModel.Items}"
+                                  SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
+                                  ItemTemplate="{StaticResource ItemTemplate}"
+                                  ItemContainerStyle="{StaticResource EndfieldListViewItemStyle}"
+                                  Background="Transparent"
+                                  BorderThickness="0"/>
+                    </Grid>
+                </Border>
             </Grid>
 
-            <!-- 右侧：配方详情 -->
+            <!-- Right: Recipe Details -->
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -84,21 +121,54 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Text="生产配方" Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,0,0,8"/>
-                <ListView Grid.Row="1"
-                          ItemsSource="{x:Bind ViewModel.ItemRecipes}"
-                          ItemTemplate="{StaticResource RecipeTemplate}"
-                          BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                          BorderThickness="1"
-                          CornerRadius="8"/>
+                <!-- Production Recipes -->
+                <Border Grid.Row="0" Style="{StaticResource EndfieldCardStyle}" Margin="0,0,0,16">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Border Background="{StaticResource SurfaceElevatedBrush}" Padding="12,8" CornerRadius="4,4,0,0">
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <TextBlock Text="PRODUCTION RECIPES" Style="{StaticResource CaptionLabelStyle}" VerticalAlignment="Center"/>
+                                <TextBlock VerticalAlignment="Center" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}">
+                                    <Run Text="("/><Run Text="{x:Bind ViewModel.ItemRecipes.Count, Mode=OneWay}"/><Run Text=" found)"/>
+                                </TextBlock>
+                            </StackPanel>
+                        </Border>
+                        <ListView Grid.Row="1"
+                                  ItemsSource="{x:Bind ViewModel.ItemRecipes}"
+                                  ItemTemplate="{StaticResource RecipeTemplate}"
+                                  ItemContainerStyle="{StaticResource EndfieldListViewItemStyle}"
+                                  Background="Transparent"
+                                  BorderThickness="0"
+                                  MaxHeight="280"/>
+                    </Grid>
+                </Border>
 
-                <TextBlock Grid.Row="2" Text="作为原料被使用" Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,16,0,8"/>
-                <ListView Grid.Row="3"
-                          ItemsSource="{x:Bind ViewModel.ItemUsages}"
-                          ItemTemplate="{StaticResource RecipeTemplate}"
-                          BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                          BorderThickness="1"
-                          CornerRadius="8"/>
+                <!-- Used As Input -->
+                <Border Grid.Row="2" Grid.RowSpan="2" Style="{StaticResource EndfieldCardStyle}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Border Background="{StaticResource SurfaceElevatedBrush}" Padding="12,8" CornerRadius="4,4,0,0">
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <TextBlock Text="USED AS INPUT" Style="{StaticResource CaptionLabelStyle}" VerticalAlignment="Center"/>
+                                <TextBlock VerticalAlignment="Center" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}">
+                                    <Run Text="("/><Run Text="{x:Bind ViewModel.ItemUsages.Count, Mode=OneWay}"/><Run Text=" found)"/>
+                                </TextBlock>
+                            </StackPanel>
+                        </Border>
+                        <ListView Grid.Row="1"
+                                  ItemsSource="{x:Bind ViewModel.ItemUsages}"
+                                  ItemTemplate="{StaticResource RecipeTemplate}"
+                                  ItemContainerStyle="{StaticResource EndfieldListViewItemStyle}"
+                                  Background="Transparent"
+                                  BorderThickness="0"/>
+                    </Grid>
+                </Border>
             </Grid>
         </Grid>
     </Grid>

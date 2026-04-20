@@ -1,6 +1,7 @@
 using AIC_EDA.Views;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace AIC_EDA
 {
@@ -44,6 +45,12 @@ namespace AIC_EDA
                     ContentFrame.Navigate(typeof(BlueprintExportPage));
                     break;
             }
+        }
+
+        private void ContentFrame_NavigationFailed(object sender, NavigationFailedEventArgs e)
+        {
+            // Log or handle navigation failure
+            e.Handled = true;
         }
     }
 }

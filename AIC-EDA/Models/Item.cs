@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI;
 
 namespace AIC_EDA.Models
 {
@@ -29,6 +30,19 @@ namespace AIC_EDA.Models
         public ItemCategory Category { get; set; }
         public string? IconPath { get; set; }
         public string? Description { get; set; }
+
+        /// <summary>
+        /// UI category color for the Endfield theme
+        /// </summary>
+        public Color CategoryColor => Category switch
+        {
+            ItemCategory.RawMaterial => Color.FromArgb(255, 158, 158, 158),      // Gray
+            ItemCategory.Intermediate => Color.FromArgb(255, 255, 214, 0),       // Yellow
+            ItemCategory.FinalProduct => Color.FromArgb(255, 57, 255, 20),       // Endfield Green
+            ItemCategory.Fluid => Color.FromArgb(255, 0, 229, 255),              // Cyan
+            ItemCategory.Special => Color.FromArgb(255, 255, 109, 0),            // Orange
+            _ => Color.FromArgb(255, 128, 128, 128),
+        };
 
         public Item() { }
 

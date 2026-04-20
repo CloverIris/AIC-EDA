@@ -13,37 +13,91 @@
         <MicaBackdrop />
     </Window.SystemBackdrop>
 
-    <Grid>
+    <Grid Background="{StaticResource SurfaceDarkBrush}">
         <NavigationView x:Name="NavView"
                         IsBackButtonVisible="Collapsed"
-                        PaneDisplayMode="Left"
+                        IsPaneToggleButtonVisible="False"
+                        PaneDisplayMode="LeftCompact"
+                        CompactPaneLength="56"
+                        OpenPaneLength="200"
                         SelectionChanged="NavView_SelectionChanged"
-                        Loaded="NavView_Loaded">
-            <NavigationView.MenuItems>
-                <NavigationViewItem Icon="Library" Content="配方浏览器" Tag="RecipeBrowser" />
-                <NavigationViewItem Icon="Repair" Content="Recipe Compiler" Tag="RecipeCompiler" />
-                <NavigationViewItem Icon="MapPin" Content="布局预览" Tag="LayoutPreview" />
-                <NavigationViewItem Icon="Share" Content="蓝图导出" Tag="BlueprintExport" />
-            </NavigationView.MenuItems>
+                        Loaded="NavView_Loaded"
+                        Background="Transparent"
+                        Style="{StaticResource EndfieldNavigationViewStyle}">
+
+            <!-- Override NavigationView colors for Endfield theme -->
+            <NavigationView.Resources>
+                <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="{StaticResource EndfieldGreen}"/>
+                <SolidColorBrush x:Key="NavigationViewItemBackgroundSelected" Color="{StaticResource EndfieldGreenDim}"/>
+                <SolidColorBrush x:Key="NavigationViewItemBackgroundSelectedPointerOver" Color="{StaticResource EndfieldGreenGlow}"/>
+                <SolidColorBrush x:Key="NavigationViewItemForegroundSelected" Color="{StaticResource EndfieldGreen}"/>
+                <SolidColorBrush x:Key="NavigationViewItemForeground" Color="{StaticResource TextSecondaryColor}"/>
+                <SolidColorBrush x:Key="NavigationViewItemForegroundPointerOver" Color="{StaticResource TextPrimaryColor}"/>
+                <SolidColorBrush x:Key="NavigationViewItemBackgroundPointerOver" Color="{StaticResource SurfaceHoverColor}"/>
+                <SolidColorBrush x:Key="NavigationViewItemBackgroundPressed" Color="{StaticResource SurfacePressedColor}"/>
+                <SolidColorBrush x:Key="NavigationViewPaneBackground" Color="{StaticResource SurfaceDarkColor}"/>
+            </NavigationView.Resources>
 
             <NavigationView.PaneHeader>
-                <TextBlock Text="AIC-EDA" 
-                           Style="{StaticResource TitleTextBlockStyle}" 
-                           Margin="16,8"/>
+                <Grid Height="56" Margin="0,8,0,0">
+                    <TextBlock Text="AIC"
+                               FontSize="18"
+                               FontWeight="Bold"
+                               Foreground="{StaticResource AccentGreenBrush}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Top"/>
+                    <TextBlock Text="EDA"
+                               FontSize="10"
+                               Foreground="{StaticResource TextTertiaryBrush}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Bottom"
+                               Margin="0,0,0,8"
+                               FontFamily="Consolas"/>
+                </Grid>
             </NavigationView.PaneHeader>
 
+            <NavigationView.MenuItems>
+                <NavigationViewItem Tag="RecipeBrowser" ToolTipService.ToolTip="配方浏览器">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE8F1;" FontSize="18"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Tag="RecipeCompiler" ToolTipService.ToolTip="RTL Synthesis">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE950;" FontSize="18"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Tag="LayoutPreview" ToolTipService.ToolTip="FloorPlan">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE80A;" FontSize="18"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Tag="BlueprintExport" ToolTipService.ToolTip="Tape Deploy">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE8A5;" FontSize="18"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+            </NavigationView.MenuItems>
+
             <NavigationView.PaneFooter>
-                <StackPanel Margin="16,8" Spacing="4">
-                    <TextBlock Text="Automated Industry Complex" 
-                               FontSize="10" Opacity="0.5"/>
-                    <TextBlock Text="Electronic Design Automation" 
-                               FontSize="10" Opacity="0.5"/>
+                <StackPanel Spacing="4" Margin="0,8">
+                    <NavigationViewItem Tag="Settings" ToolTipService.ToolTip="Settings">
+                        <NavigationViewItem.Icon>
+                            <FontIcon Glyph="&#xE713;" FontSize="18"/>
+                        </NavigationViewItem.Icon>
+                    </NavigationViewItem>
+                    <TextBlock Text="v1.0"
+                               FontSize="9"
+                               Foreground="{StaticResource TextDisabledBrush}"
+                               HorizontalAlignment="Center"
+                               Margin="0,4,0,0"
+                               FontFamily="Consolas"/>
                 </StackPanel>
             </NavigationView.PaneFooter>
 
             <Frame x:Name="ContentFrame"
-                   Margin="8"
-                   CornerRadius="8"/>
+                   Background="{StaticResource SurfaceDarkBrush}"
+                   NavigationFailed="ContentFrame_NavigationFailed"/>
         </NavigationView>
     </Grid>
 </Window>
