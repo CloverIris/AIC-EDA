@@ -305,6 +305,12 @@ namespace AIC_EDA.Views
                     Canvas.SetTop(tb, y + h / 2 - 7);
                     DesignCanvas.Children.Add(tb);
                 }
+
+                // Power radius visualization for selected machine
+                if (isSelected)
+                {
+                    DrawPowerRadius(machine);
+                }
             }
         }
 
@@ -432,6 +438,31 @@ namespace AIC_EDA.Views
                     DesignCanvas.Children.Add(tb);
                 }
             }
+        }
+
+        private void DrawPowerRadius(PlacedMachine machine)
+        {
+            var spec = machine.Spec;
+            if (spec == null || spec.PowerRadius <= 0) return;
+
+            double cell = _gridCellPixels * _zoomFactor;
+            double radiusPixels = spec.PowerRadius * cell;
+
+            double x = _panOffset.X + (machine.GridX + machine.GridWidth / 2.0) * cell;
+            double y = _panOffset.Y + (machine.GridY + machine.GridDepth / 2.0) * cell;
+
+            var circle = new Ellipse
+            {
+                Width = radiusPixels * 2,
+                Height = radiusPixels * 2,
+                Stroke = new SolidColorBrush(Color.FromArgb(0x40, 0xFF, 0xD7, 0x00)),
+                StrokeThickness = 1,
+                Fill = new SolidColorBrush(Color.FromArgb(0x10, 0xFF, 0xD7, 0x00)),
+                StrokeDashArray = new DoubleCollection { 4, 4 },
+            };
+            Canvas.SetLeft(circle, x - radiusPixels);
+            Canvas.SetTop(circle, y - radiusPixels);
+            DesignCanvas.Children.Add(circle);
         }
 
         // ===== POINTER INTERACTION =====
