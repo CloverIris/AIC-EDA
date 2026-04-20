@@ -42,6 +42,9 @@ namespace AIC_EDA.ViewModels
         private int _machineCount;
 
         [ObservableProperty]
+        private int _connectionCount;
+
+        [ObservableProperty]
         private string _categorySummary = string.Empty;
 
         public LayoutDesignerViewModel()
@@ -401,6 +404,7 @@ namespace AIC_EDA.ViewModels
         private void UpdateStats()
         {
             MachineCount = Layout.Machines.Count;
+            ConnectionCount = Layout.Connections.Count;
             var counts = Layout.GetCategoryCounts();
             CategorySummary = string.Join(" | ", counts.Select(c => $"{c.Key}: {c.Value}"));
         }

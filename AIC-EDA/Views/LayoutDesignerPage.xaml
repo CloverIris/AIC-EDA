@@ -160,6 +160,7 @@
                     <StackPanel Spacing="2">
                         <TextBlock FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" FontFamily="Consolas">
                             <Run Text="Machines: "/><Run Text="{x:Bind ViewModel.MachineCount, Mode=OneWay}"/>
+                            <Run Text=" | Connections: "/><Run Text="{x:Bind ViewModel.ConnectionCount, Mode=OneWay}" Foreground="{StaticResource AccentGreenBrush}"/>
                         </TextBlock>
                         <TextBlock Text="{x:Bind ViewModel.CategorySummary, Mode=OneWay}" FontSize="10" Foreground="{StaticResource TextTertiaryBrush}" FontFamily="Consolas"/>
                         <TextBlock x:Name="CanvasInfoText" Text="Grid: 30px | Zoom: 100%" FontSize="10" Foreground="{StaticResource TextTertiaryBrush}" FontFamily="Consolas"/>
