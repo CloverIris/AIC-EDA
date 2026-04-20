@@ -47,6 +47,9 @@ namespace AIC_EDA
                 case "LayoutPreview":
                     ContentFrame.Navigate(typeof(LayoutPreviewPage));
                     break;
+                case "LayoutDesigner":
+                    ContentFrame.Navigate(typeof(LayoutDesignerPage));
+                    break;
                 case "BlueprintExport":
                     ContentFrame.Navigate(typeof(BlueprintExportPage));
                     break;

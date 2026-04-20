@@ -158,9 +158,14 @@
                             <FontIcon Glyph="&#xE950;" FontSize="18"/>
                         </NavigationViewItem.Icon>
                     </NavigationViewItem>
-                    <NavigationViewItem Tag="LayoutPreview" ToolTipService.ToolTip="FloorPlan">
+                    <NavigationViewItem Tag="LayoutPreview" ToolTipService.ToolTip="FloorPlan Preview">
                         <NavigationViewItem.Icon>
                             <FontIcon Glyph="&#xE80A;" FontSize="18"/>
+                        </NavigationViewItem.Icon>
+                    </NavigationViewItem>
+                    <NavigationViewItem Tag="LayoutDesigner" ToolTipService.ToolTip="Layout Designer">
+                        <NavigationViewItem.Icon>
+                            <FontIcon Glyph="&#xE7C5;" FontSize="18"/>
                         </NavigationViewItem.Icon>
                     </NavigationViewItem>
                     <NavigationViewItem Tag="BlueprintExport" ToolTipService.ToolTip="Tape Deploy">
