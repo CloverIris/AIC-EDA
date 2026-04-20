@@ -38,6 +38,7 @@ namespace AIC_EDA.Views
 
         // Isometric view state
         private bool _isIsometric = false;
+        private bool _showAllPowerRadii = false;
         private const double IsoCellWidth = 1.0;  // Will be scaled by zoom
         private const double IsoCellHeight = 0.5; // Half width for 2:1 isometric
 
@@ -306,8 +307,8 @@ namespace AIC_EDA.Views
                     DesignCanvas.Children.Add(tb);
                 }
 
-                // Power radius visualization for selected machine
-                if (isSelected)
+                // Power radius visualization for selected machine or all if toggled
+                if (isSelected || _showAllPowerRadii)
                 {
                     DrawPowerRadius(machine);
                 }
@@ -696,6 +697,12 @@ namespace AIC_EDA.Views
         private void IsometricToggle_Click(object sender, RoutedEventArgs e)
         {
             _isIsometric = IsometricToggle.IsChecked == true;
+            RedrawCanvas();
+        }
+
+        private void ShowPowerRadiusToggle_Click(object sender, RoutedEventArgs e)
+        {
+            _showAllPowerRadii = ShowPowerRadiusToggle.IsChecked == true;
             RedrawCanvas();
         }
 

@@ -71,6 +71,10 @@
                     <ToggleButton x:Name="IsometricToggle" Padding="8,4" Background="Transparent" BorderThickness="0" Click="IsometricToggle_Click" ToolTipService.ToolTip="Toggle Isometric View">
                         <FontIcon Glyph="&#xE809;" FontSize="14" Foreground="{StaticResource TextSecondaryBrush}"/>
                     </ToggleButton>
+                    <Border Width="1" Background="{StaticResource BorderDefaultBrush}" Margin="4,2"/>
+                    <ToggleButton x:Name="ShowPowerRadiusToggle" Padding="8,4" Background="Transparent" BorderThickness="0" Click="ShowPowerRadiusToggle_Click" ToolTipService.ToolTip="Show All Power Radii">
+                        <FontIcon Glyph="&#xE945;" FontSize="14" Foreground="{StaticResource AccentOrangeBrush}"/>
+                    </ToggleButton>
                 </StackPanel>
             </Grid>
         </Border>
