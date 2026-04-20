@@ -36,6 +36,11 @@ namespace AIC_EDA.Views
         private const int CanvasGridW = 60;
         private const int CanvasGridH = 40;
 
+        // Isometric view state
+        private bool _isIsometric = false;
+        private const double IsoCellWidth = 1.0;  // Will be scaled by zoom
+        private const double IsoCellHeight = 0.5; // Half width for 2:1 isometric
+
         // Category colors (same as LayoutPreviewPage)
         private static readonly Dictionary<MachineCategory, Color> CategoryColors = new()
         {
@@ -158,6 +163,14 @@ namespace AIC_EDA.Views
 
         private void DrawMachines()
         {
+            if (_isIsometric)
+                DrawMachinesIsometric();
+            else
+                DrawMachinesTopDown();
+        }
+
+        private void DrawMachinesTopDown()
+        {
             double cell = _gridCellPixels * _zoomFactor;
 
             foreach (var machine in ViewModel.Layout.Machines)
@@ -218,6 +231,132 @@ namespace AIC_EDA.Views
                     };
                     Canvas.SetLeft(tb, x + 2);
                     Canvas.SetTop(tb, y + h / 2 - 7);
+                    DesignCanvas.Children.Add(tb);
+                }
+            }
+        }
+
+        private void DrawMachinesIsometric()
+        {
+            double cell = _gridCellPixels * _zoomFactor;
+            double isoW = cell;        // width of a diamond tile
+            double isoH = cell * 0.5;  // height of a diamond tile (2:1 ratio)
+            double blockH = cell * 0.4; // pseudo-height of the block
+
+            // Sort machines by (gridX + gridY) for proper depth ordering (painter's algorithm)
+            var sortedMachines = ViewModel.Layout.Machines.OrderBy(m => m.GridX + m.GridY).ToList();
+
+            foreach (var machine in sortedMachines)
+            {
+                bool isSelected = ViewModel.SelectedMachine?.Id == machine.Id;
+                var color = CategoryColors.GetValueOrDefault(machine.Category, Colors.Gray);
+
+                // Isometric base position (bottom center of the block footprint)
+                double baseIsoX = (machine.GridX - machine.GridY) * isoW * 0.5;
+                double baseIsoY = (machine.GridX + machine.GridY) * isoH * 0.5;
+
+                double footprintW = machine.GridWidth * isoW;
+                double footprintH = machine.GridDepth * isoH;
+
+                // Screen position
+                double screenX = _panOffset.X + baseIsoX + CanvasGridW * isoW * 0.5;
+                double screenY = _panOffset.Y + baseIsoY;
+
+                // Color variants for faces
+                var topColor = Color.FromArgb(0xEE,
+                    (byte)Math.Min(255, color.R + 30),
+                    (byte)Math.Min(255, color.G + 30),
+                    (byte)Math.Min(255, color.B + 30));
+                var leftColor = Color.FromArgb(0xDD,
+                    (byte)Math.Max(0, color.R - 20),
+                    (byte)Math.Max(0, color.G - 20),
+                    (byte)Math.Max(0, color.B - 20));
+                var rightColor = Color.FromArgb(0xCC,
+                    (byte)Math.Max(0, color.R - 40),
+                    (byte)Math.Max(0, color.G - 40),
+                    (byte)Math.Max(0, color.B - 40));
+
+                // Selected highlight glow
+                if (isSelected)
+                {
+                    var glowPoints = new PointCollection
+                    {
+                        new Point(screenX, screenY - blockH - footprintH * 0.5 - 4),
+                        new Point(screenX + footprintW * 0.5 + 4, screenY - blockH - 4),
+                        new Point(screenX, screenY - blockH + footprintH * 0.5 + 4),
+                        new Point(screenX - footprintW * 0.5 - 4, screenY - blockH - 4),
+                    };
+                    var glow = new Polygon
+                    {
+                        Points = glowPoints,
+                        Fill = new SolidColorBrush(Color.FromArgb(0x30, 0xFF, 0xD6, 0x00)),
+                    };
+                    DesignCanvas.Children.Add(glow);
+                }
+
+                // Left face
+                var leftFace = new Polygon
+                {
+                    Points = new PointCollection
+                    {
+                        new Point(screenX - footprintW * 0.5, screenY - footprintH * 0.5),
+                        new Point(screenX, screenY - blockH - footprintH * 0.5),
+                        new Point(screenX, screenY - blockH + footprintH * 0.5),
+                        new Point(screenX - footprintW * 0.5, screenY + footprintH * 0.5),
+                    },
+                    Fill = new SolidColorBrush(leftColor),
+                    Stroke = isSelected ? new SolidColorBrush(Colors.White) : null,
+                    StrokeThickness = isSelected ? 1 : 0,
+                };
+                DesignCanvas.Children.Add(leftFace);
+
+                // Right face
+                var rightFace = new Polygon
+                {
+                    Points = new PointCollection
+                    {
+                        new Point(screenX + footprintW * 0.5, screenY - footprintH * 0.5),
+                        new Point(screenX, screenY - blockH - footprintH * 0.5),
+                        new Point(screenX, screenY - blockH + footprintH * 0.5),
+                        new Point(screenX + footprintW * 0.5, screenY + footprintH * 0.5),
+                    },
+                    Fill = new SolidColorBrush(rightColor),
+                    Stroke = isSelected ? new SolidColorBrush(Colors.White) : null,
+                    StrokeThickness = isSelected ? 1 : 0,
+                };
+                DesignCanvas.Children.Add(rightFace);
+
+                // Top face (diamond)
+                var topFace = new Polygon
+                {
+                    Points = new PointCollection
+                    {
+                        new Point(screenX, screenY - blockH - footprintH * 0.5),
+                        new Point(screenX + footprintW * 0.5, screenY - blockH),
+                        new Point(screenX, screenY - blockH + footprintH * 0.5),
+                        new Point(screenX - footprintW * 0.5, screenY - blockH),
+                    },
+                    Fill = new SolidColorBrush(topColor),
+                    Stroke = isSelected ? new SolidColorBrush(Colors.White) : new SolidColorBrush(Color.FromArgb(0x60, 255, 255, 255)),
+                    StrokeThickness = isSelected ? 2 : 1,
+                };
+                DesignCanvas.Children.Add(topFace);
+
+                // Label on top face
+                if (footprintW > 30)
+                {
+                    var tb = new TextBlock
+                    {
+                        Text = machine.DisplayName,
+                        FontSize = Math.Max(7, cell * 0.22),
+                        Foreground = new SolidColorBrush(Colors.White),
+                        FontWeight = isSelected ? FontWeights.Bold : FontWeights.SemiBold,
+                        TextTrimming = TextTrimming.CharacterEllipsis,
+                        MaxWidth = footprintW * 0.8,
+                        TextAlignment = TextAlignment.Center,
+                    };
+                    Canvas.SetLeft(tb, screenX - footprintW * 0.4);
+                    Canvas.SetTop(tb, screenY - blockH - 6);
                     DesignCanvas.Children.Add(tb);
                 }
             }
@@ -448,6 +587,12 @@ namespace AIC_EDA.Views
         {
             _zoomFactor = 1.0;
             _panOffset = new Point(20, 20);
+            RedrawCanvas();
+        }
+
+        private void IsometricToggle_Click(object sender, RoutedEventArgs e)
+        {
+            _isIsometric = IsometricToggle.IsChecked == true;
             RedrawCanvas();
         }
 

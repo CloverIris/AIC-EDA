@@ -67,6 +67,10 @@
                     <Button Style="{StaticResource EndfieldGhostButtonStyle}" Padding="8,4" Click="ZoomReset_Click" ToolTipService.ToolTip="Reset View">
                         <FontIcon Glyph="&#xE81C;" FontSize="14" Foreground="{StaticResource TextSecondaryBrush}"/>
                     </Button>
+                    <Border Width="1" Background="{StaticResource BorderDefaultBrush}" Margin="4,2"/>
+                    <ToggleButton x:Name="IsometricToggle" Padding="8,4" Background="Transparent" BorderThickness="0" Click="IsometricToggle_Click" ToolTipService.ToolTip="Toggle Isometric View">
+                        <FontIcon Glyph="&#xE809;" FontSize="14" Foreground="{StaticResource TextSecondaryBrush}"/>
+                    </ToggleButton>
                 </StackPanel>
             </Grid>
         </Border>
