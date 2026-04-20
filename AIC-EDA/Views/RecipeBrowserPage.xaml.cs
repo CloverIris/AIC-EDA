@@ -12,6 +12,7 @@ namespace AIC_EDA.Views
         public RecipeBrowserPage()
         {
             this.InitializeComponent();
+            this.Loaded += (s, e) => SetFilterChipActive(FilterAllButton);
         }
 
         private void SetFilterChipActive(Button activeButton)
@@ -78,12 +79,9 @@ namespace AIC_EDA.Views
         {
             if (ViewModel.SelectedItem == null) return;
 
-            // Navigate to RecipeCompiler with this item pre-selected
-            // This requires MainWindow to expose a navigation method
-            // For now, just open the compiler page
             if (App.MainWindow is MainWindow main)
             {
-                main.NavigateToPage("RecipeCompiler");
+                main.NavigateToPage("RecipeCompiler", ViewModel.SelectedItem);
             }
         }
     }

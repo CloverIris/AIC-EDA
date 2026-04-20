@@ -31,13 +31,18 @@ namespace AIC_EDA
 
         public void NavigateToPage(string tag)
         {
+            NavigateToPage(tag, null);
+        }
+
+        public void NavigateToPage(string tag, object? parameter)
+        {
             switch (tag)
             {
                 case "RecipeBrowser":
                     ContentFrame.Navigate(typeof(RecipeBrowserPage));
                     break;
                 case "RecipeCompiler":
-                    ContentFrame.Navigate(typeof(RecipeCompilerPage));
+                    ContentFrame.Navigate(typeof(RecipeCompilerPage), parameter);
                     break;
                 case "LayoutPreview":
                     ContentFrame.Navigate(typeof(LayoutPreviewPage));

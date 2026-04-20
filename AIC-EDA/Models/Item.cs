@@ -46,6 +46,11 @@ namespace AIC_EDA.Models
         };
 
         /// <summary>
+        /// Brush version of category color for XAML binding
+        /// </summary>
+        public Microsoft.UI.Xaml.Media.SolidColorBrush CategoryColorBrush => new(CategoryColor);
+
+        /// <summary>
         /// Segoe Fluent Icons glyph for this item category
         /// </summary>
         public string IconGlyph => Category switch
