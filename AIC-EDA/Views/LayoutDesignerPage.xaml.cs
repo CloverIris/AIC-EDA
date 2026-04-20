@@ -734,6 +734,15 @@ namespace AIC_EDA.Views
             PropRotationText.Text = $"{machine.Rotation} degrees";
             var spec = machine.Spec;
             PropPowerText.Text = spec?.PowerRadius > 0 ? $"{spec.PowerRadius:F0} m" : "N/A";
+
+            // Recipe info
+            bool hasRecipe = !string.IsNullOrEmpty(machine.RecipeId);
+            RecipeInfoGrid.Visibility = hasRecipe ? Visibility.Visible : Visibility.Collapsed;
+            if (hasRecipe)
+            {
+                PropRecipeText.Text = machine.RecipeId;
+            }
+            PropLabelText.Text = !string.IsNullOrEmpty(machine.Label) ? machine.Label : "-";
         }
 
         private void Duplicate_Click(object sender, RoutedEventArgs e)

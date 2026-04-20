@@ -212,6 +212,23 @@
 
                     <Border Height="1" Background="{StaticResource BorderDefaultBrush}" Margin="0,4"/>
 
+                    <Grid ColumnSpacing="8" RowSpacing="8" x:Name="RecipeInfoGrid" Visibility="Collapsed">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Recipe" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="PropRecipeText" Grid.Row="0" Grid.Column="1" Text="-" FontSize="11" Foreground="{StaticResource AccentCyanBrush}" FontFamily="Consolas" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Label" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="PropLabelText" Grid.Row="1" Grid.Column="1" Text="-" FontSize="11" Foreground="{StaticResource TextPrimaryBrush}" FontFamily="Consolas" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                    </Grid>
+
+                    <Border Height="1" Background="{StaticResource BorderDefaultBrush}" Margin="0,4"/>
+
                     <StackPanel Spacing="6">
                         <TextBlock Text="CONTROLS" Style="{StaticResource CaptionLabelStyle}"/>
                         <Button Content="Duplicate (Ctrl+D)" Click="Duplicate_Click" Style="{StaticResource EndfieldButtonStyle}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
