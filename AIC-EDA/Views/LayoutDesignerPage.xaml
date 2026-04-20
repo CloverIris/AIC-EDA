@@ -55,6 +55,9 @@
                         <FontIcon Glyph="&#xE8E5;" FontSize="14" Foreground="{StaticResource AccentCyanBrush}"/>
                     </Button>
                     <Border Width="1" Background="{StaticResource BorderDefaultBrush}" Margin="4,2"/>
+                    <Button Style="{StaticResource EndfieldGhostButtonStyle}" Padding="8,4" Click="ClearConnections_Click" ToolTipService.ToolTip="Clear Connections">
+                        <FontIcon Glyph="&#xE8AB;" FontSize="14" Foreground="{StaticResource TextSecondaryBrush}"/>
+                    </Button>
                     <Button Style="{StaticResource EndfieldGhostButtonStyle}" Padding="8,4" Click="ClearLayout_Click" ToolTipService.ToolTip="Clear All">
                         <FontIcon Glyph="&#xE74D;" FontSize="14" Foreground="{StaticResource TextSecondaryBrush}"/>
                     </Button>

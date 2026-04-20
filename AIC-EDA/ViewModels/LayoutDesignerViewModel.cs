@@ -287,6 +287,15 @@ namespace AIC_EDA.ViewModels
         }
 
         [RelayCommand]
+        private void ClearConnections()
+        {
+            Layout.Connections.Clear();
+            ConnectSource = null;
+            StatusText = "All connections cleared.";
+            OnPropertyChanged(nameof(Layout));
+        }
+
+        [RelayCommand]
         private void ClearLayout()
         {
             Layout.Clear();

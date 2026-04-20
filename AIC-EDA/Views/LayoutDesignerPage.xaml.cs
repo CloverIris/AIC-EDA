@@ -792,6 +792,11 @@ namespace AIC_EDA.Views
             ViewModel.ImportFromGraphCommand.Execute(null);
         }
 
+        private void ClearConnections_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.ClearConnectionsCommand.Execute(null);
+        }
+
         private async void SaveLayout_Click(object sender, RoutedEventArgs e)
         {
             await ViewModel.SaveLayoutCommand.ExecuteAsync(null);
