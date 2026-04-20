@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="148 148 216 216" width="216" height="216">
+  <defs>
+    <radialGradient id="bgGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#1a1a1a"/>
+      <stop offset="100%" stop-color="#0D0D0D"/>
+    </radialGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glowStrong" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect x="148" y="148" width="216" height="216" fill="url(#bgGrad)"/>
+
+  <!-- Central chip die -->
+  <rect x="156" y="156" width="200" height="200" rx="16" ry="16"
+        fill="#141414" stroke="#FFD600" stroke-width="3" filter="url(#glow)"/>
+
+  <!-- Grid pattern inside chip -->
+  <g stroke="#FFD600" stroke-width="0.8" opacity="0.15">
+    <line x1="196" y1="156" x2="196" y2="356"/>
+    <line x1="236" y1="156" x2="236" y2="356"/>
+    <line x1="276" y1="156" x2="276" y2="356"/>
+    <line x1="316" y1="156" x2="316" y2="356"/>
+    <line x1="156" y1="196" x2="356" y2="196"/>
+    <line x1="156" y1="236" x2="356" y2="236"/>
+    <line x1="156" y1="276" x2="356" y2="276"/>
+    <line x1="156" y1="316" x2="356" y2="316"/>
+  </g>
+
+  <!-- Central gear icon -->
+  <g transform="translate(256, 248)">
+    <circle cx="0" cy="0" r="44" fill="none" stroke="#FFD600" stroke-width="3" filter="url(#glowStrong)"/>
+    <g stroke="#FFD600" stroke-width="6" stroke-linecap="round">
+      <line x1="0" y1="-52" x2="0" y2="-40"/>
+      <line x1="0" y1="52" x2="0" y2="40"/>
+      <line x1="-52" y1="0" x2="-40" y2="0"/>
+      <line x1="52" y1="0" x2="40" y2="0"/>
+      <line x1="-37" y1="-37" x2="-28" y2="-28"/>
+      <line x1="37" y1="37" x2="28" y2="28"/>
+      <line x1="-37" y1="37" x2="-28" y2="28"/>
+      <line x1="37" y1="-37" x2="28" y2="-28"/>
+    </g>
+    <circle cx="0" cy="0" r="20" fill="#FFD600" opacity="0.9"/>
+    <circle cx="0" cy="0" r="12" fill="#0D0D0D"/>
+    <circle cx="0" cy="0" r="5" fill="#FFD600"/>
+  </g>
+
+  <!-- AIC text -->
+  <g font-family="Consolas, 'Courier New', monospace" text-anchor="middle">
+    <text x="256" y="340" font-size="28" font-weight="bold" fill="#FFD600" letter-spacing="6">AIC</text>
+    <line x1="196" y1="352" x2="316" y2="352" stroke="#FFD600" stroke-width="1.5" opacity="0.6"/>
+    <text x="256" y="376" font-size="22" font-weight="bold" fill="#FFD600" letter-spacing="8" opacity="0.9">EDA</text>
+  </g>
+
+  <!-- Corner brackets -->
+  <g stroke="#FFD600" stroke-width="2" fill="none" opacity="0.5">
+    <polyline points="176,176 176,192 192,192"/>
+    <polyline points="320,192 336,192 336,176"/>
+    <polyline points="176,336 176,320 192,320"/>
+    <polyline points="320,320 336,320 336,336"/>
+  </g>
+
+  <!-- Circuit nodes -->
+  <g fill="#FFD600" opacity="0.7">
+    <circle cx="196" cy="196" r="2.5"/>
+    <circle cx="316" cy="196" r="2.5"/>
+    <circle cx="196" cy="316" r="2.5"/>
+    <circle cx="316" cy="316" r="2.5"/>
+  </g>
+</svg>
