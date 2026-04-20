@@ -45,14 +45,18 @@ namespace AIC_EDA.Views
             [MachineCategory.Agriculture] = Color.FromArgb(0x40, 0x32, 0xCD, 0x32),
         };
 
+        private bool _isLoaded = false;
+
         public LayoutPreviewPage()
         {
             this.InitializeComponent();
             this.Loaded += LayoutPreviewPage_Loaded;
+            GridSizeCombo.SelectedIndex = 0;
         }
 
         private void LayoutPreviewPage_Loaded(object sender, RoutedEventArgs e)
         {
+            _isLoaded = true;
             // Set canvas size from parent container
             UpdateCanvasSize();
             DrawLayout();
@@ -103,6 +107,9 @@ namespace AIC_EDA.Views
         // ===== MAIN DRAW ENTRY =====
         public void DrawLayout()
         {
+            if (!_isLoaded) return;
+            if (PlaceholderPanel == null || LayoutCanvas == null) return;
+
             var graph = App.CurrentGraph;
             if (graph == null || graph.Nodes.Count == 0)
             {
@@ -489,6 +496,7 @@ namespace AIC_EDA.Views
 
         private void GridSizeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (!_isLoaded) return;
             if (GridSizeCombo.SelectedItem is ComboBoxItem item && item.Tag is string tag)
             {
                 if (double.TryParse(tag, out double size))

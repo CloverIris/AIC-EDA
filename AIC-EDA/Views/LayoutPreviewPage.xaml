@@ -62,7 +62,7 @@
                 </ToggleButton>
                 <Border Width="1" Background="{StaticResource BorderDefaultBrush}" Margin="4,2"/>
                 <!-- Grid size selector -->
-                <ComboBox x:Name="GridSizeCombo" SelectedIndex="0" Width="90" Height="28" FontSize="11"
+                <ComboBox x:Name="GridSizeCombo" Width="90" Height="28" FontSize="11"
                           Background="Transparent" BorderThickness="1"
                           SelectionChanged="GridSizeCombo_SelectionChanged">
                     <ComboBoxItem Content="40 px" Tag="40"/>
