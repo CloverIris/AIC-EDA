@@ -237,9 +237,118 @@ namespace AIC_EDA.Views
         private void DrawMachines()
         {
             if (_isIsometric)
+            {
+                DrawConnectionsIsometric();
                 DrawMachinesIsometric();
+            }
             else
+            {
+                DrawConnectionsTopDown();
                 DrawMachinesTopDown();
+            }
+        }
+
+        private void DrawConnectionsTopDown()
+        {
+            double cell = _gridCellPixels * _zoomFactor;
+            foreach (var conn in ViewModel.Layout.Connections)
+            {
+                var source = ViewModel.Layout.Machines.FirstOrDefault(m => m.Id == conn.SourceId);
+                var target = ViewModel.Layout.Machines.FirstOrDefault(m => m.Id == conn.TargetId);
+                if (source == null || target == null) continue;
+
+                double x1 = _panOffset.X + (source.GridX + source.GridWidth / 2.0) * cell;
+                double y1 = _panOffset.Y + (source.GridY + source.GridDepth / 2.0) * cell;
+                double x2 = _panOffset.X + (target.GridX + target.GridWidth / 2.0) * cell;
+                double y2 = _panOffset.Y + (target.GridY + target.GridDepth / 2.0) * cell;
+
+                var color = conn.Type == ConnectionType.Pipe
+                    ? Color.FromArgb(0xAA, 0x1E, 0x90, 0xFF)
+                    : Color.FromArgb(0xAA, 0xFF, 0xD6, 0x00);
+
+                // Connection line
+                var line = new Line
+                {
+                    X1 = x1, Y1 = y1, X2 = x2, Y2 = y2,
+                    Stroke = new SolidColorBrush(color),
+                    StrokeThickness = 2,
+                    StrokeDashArray = new DoubleCollection { 4, 2 },
+                };
+                DesignCanvas.Children.Add(line);
+
+                // Arrowhead at target
+                double angle = Math.Atan2(y2 - y1, x2 - x1);
+                double arrowLen = 8;
+                double arrowAngle = 0.5;
+                var arrow = new Polygon
+                {
+                    Points = new PointCollection
+                    {
+                        new Point(x2, y2),
+                        new Point(x2 - arrowLen * Math.Cos(angle - arrowAngle), y2 - arrowLen * Math.Sin(angle - arrowAngle)),
+                        new Point(x2 - arrowLen * Math.Cos(angle + arrowAngle), y2 - arrowLen * Math.Sin(angle + arrowAngle)),
+                    },
+                    Fill = new SolidColorBrush(color),
+                };
+                DesignCanvas.Children.Add(arrow);
+            }
+
+            // Highlight connect source
+            if (ViewModel.IsConnectMode && ViewModel.ConnectSource != null)
+            {
+                var src = ViewModel.ConnectSource;
+                double cx = _panOffset.X + (src.GridX + src.GridWidth / 2.0) * cell;
+                double cy = _panOffset.Y + (src.GridY + src.GridDepth / 2.0) * cell;
+                var pulse = new Ellipse
+                {
+                    Width = 20,
+                    Height = 20,
+                    Stroke = new SolidColorBrush(Color.FromArgb(0xCC, 0xFF, 0xD6, 0x00)),
+                    StrokeThickness = 2,
+                    Fill = null,
+                };
+                Canvas.SetLeft(pulse, cx - 10);
+                Canvas.SetTop(pulse, cy - 10);
+                DesignCanvas.Children.Add(pulse);
+            }
+        }
+
+        private void DrawConnectionsIsometric()
+        {
+            double cell = _gridCellPixels * _zoomFactor;
+            double isoW = cell;
+            double isoH = cell * 0.5;
+            double centerX = _panOffset.X + CanvasGridW * isoW * 0.5;
+
+            foreach (var conn in ViewModel.Layout.Connections)
+            {
+                var source = ViewModel.Layout.Machines.FirstOrDefault(m => m.Id == conn.SourceId);
+                var target = ViewModel.Layout.Machines.FirstOrDefault(m => m.Id == conn.TargetId);
+                if (source == null || target == null) continue;
+
+                double baseIsoX1 = (source.GridX - source.GridY) * isoW * 0.5;
+                double baseIsoY1 = (source.GridX + source.GridY) * isoH * 0.5;
+                double baseIsoX2 = (target.GridX - target.GridY) * isoW * 0.5;
+                double baseIsoY2 = (target.GridX + target.GridY) * isoH * 0.5;
+
+                double x1 = centerX + baseIsoX1;
+                double y1 = _panOffset.Y + baseIsoY1;
+                double x2 = centerX + baseIsoX2;
+                double y2 = _panOffset.Y + baseIsoY2;
+
+                var color = conn.Type == ConnectionType.Pipe
+                    ? Color.FromArgb(0xAA, 0x1E, 0x90, 0xFF)
+                    : Color.FromArgb(0xAA, 0xFF, 0xD6, 0x00);
+
+                var line = new Line
+                {
+                    X1 = x1, Y1 = y1, X2 = x2, Y2 = y2,
+                    Stroke = new SolidColorBrush(color),
+                    StrokeThickness = 2,
+                    StrokeDashArray = new DoubleCollection { 4, 2 },
+                };
+                DesignCanvas.Children.Add(line);
+            }
         }
 
         private void DrawMachinesTopDown()
@@ -488,14 +597,28 @@ namespace AIC_EDA.Views
 
             if (existing != null)
             {
-                // Select existing machine
-                ViewModel.SelectMachineCommand.Execute(existing.Id);
-                _dragMachine = existing;
-                _dragStartPos = pos;
-                _dragStartGridX = existing.GridX;
-                _dragStartGridY = existing.GridY;
-                _isDragging = true;
-                DesignCanvas.CapturePointer(e.Pointer);
+                if (ViewModel.IsConnectMode)
+                {
+                    if (ViewModel.ConnectSource == null)
+                    {
+                        ViewModel.SetConnectSourceCommand.Execute(existing.Id);
+                    }
+                    else
+                    {
+                        ViewModel.ConnectToTargetCommand.Execute(existing.Id);
+                    }
+                }
+                else
+                {
+                    // Select existing machine
+                    ViewModel.SelectMachineCommand.Execute(existing.Id);
+                    _dragMachine = existing;
+                    _dragStartPos = pos;
+                    _dragStartGridX = existing.GridX;
+                    _dragStartGridY = existing.GridY;
+                    _isDragging = true;
+                    DesignCanvas.CapturePointer(e.Pointer);
+                }
             }
             else if (ViewModel.IsPlacingMode && ViewModel.PaletteSelection.HasValue)
             {
@@ -511,6 +634,10 @@ namespace AIC_EDA.Views
                 ViewModel.SelectedMachine = null;
                 ViewModel.IsPlacingMode = false;
                 ViewModel.PaletteSelection = null;
+                if (ViewModel.IsConnectMode)
+                {
+                    ViewModel.ConnectSource = null;
+                }
             }
 
             e.Handled = true;
@@ -711,6 +838,11 @@ namespace AIC_EDA.Views
         {
             _showAllPowerRadii = ShowPowerRadiusToggle.IsChecked == true;
             RedrawCanvas();
+        }
+
+        private void ConnectModeToggle_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.ToggleConnectModeCommand.Execute(null);
         }
 
         // ===== PROPERTY PANEL =====

@@ -75,6 +75,10 @@
                     <ToggleButton x:Name="ShowPowerRadiusToggle" Padding="8,4" Background="Transparent" BorderThickness="0" Click="ShowPowerRadiusToggle_Click" ToolTipService.ToolTip="Show All Power Radii">
                         <FontIcon Glyph="&#xE945;" FontSize="14" Foreground="{StaticResource AccentOrangeBrush}"/>
                     </ToggleButton>
+                    <Border Width="1" Background="{StaticResource BorderDefaultBrush}" Margin="4,2"/>
+                    <ToggleButton x:Name="ConnectModeToggle" Padding="8,4" Background="Transparent" BorderThickness="0" Click="ConnectModeToggle_Click" ToolTipService.ToolTip="Connect Mode">
+                        <FontIcon Glyph="&#xE8AB;" FontSize="14" Foreground="{StaticResource AccentGreenBrush}"/>
+                    </ToggleButton>
                 </StackPanel>
             </Grid>
         </Border>

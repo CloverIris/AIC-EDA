@@ -140,6 +140,27 @@ namespace AIC_EDA.Models
             ModifiedAt = DateTime.Now;
         }
 
+        /// <summary>已放置的连接列表</summary>
+        public List<MachineConnection> Connections { get; set; } = new();
+
+        /// <summary>添加连接</summary>
+        public bool AddConnection(MachineConnection conn)
+        {
+            // Prevent duplicate connections
+            if (Connections.Any(c => c.SourceId == conn.SourceId && c.TargetId == conn.TargetId))
+                return false;
+            Connections.Add(conn);
+            ModifiedAt = DateTime.Now;
+            return true;
+        }
+
+        /// <summary>移除与指定机器相关的所有连接</summary>
+        public void RemoveConnectionsForMachine(Guid machineId)
+        {
+            Connections.RemoveAll(c => c.SourceId == machineId || c.TargetId == machineId);
+            ModifiedAt = DateTime.Now;
+        }
+
         /// <summary>获取指定网格位置的设备</summary>
         public PlacedMachine? GetMachineAt(int gridX, int gridY)
         {
@@ -158,5 +179,23 @@ namespace AIC_EDA.Models
             return Machines.GroupBy(m => m.Category)
                           .ToDictionary(g => g.Key, g => g.Count());
         }
+    }
+
+    /// <summary>
+    /// 机器之间的连接（传送带/管道）
+    /// </summary>
+    public class MachineConnection
+    {
+        public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid SourceId { get; set; }
+        public Guid TargetId { get; set; }
+        public string? ItemId { get; set; }
+        public ConnectionType Type { get; set; } = ConnectionType.ConveyorBelt;
+    }
+
+    public enum ConnectionType
+    {
+        ConveyorBelt,
+        Pipe,
     }
 }

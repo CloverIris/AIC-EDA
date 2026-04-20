@@ -33,6 +33,12 @@ namespace AIC_EDA.ViewModels
         private bool _isPlacingMode;
 
         [ObservableProperty]
+        private bool _isConnectMode;
+
+        [ObservableProperty]
+        private PlacedMachine? _connectSource;
+
+        [ObservableProperty]
         private int _machineCount;
 
         [ObservableProperty]
@@ -234,10 +240,58 @@ namespace AIC_EDA.ViewModels
         }
 
         [RelayCommand]
+        private void ToggleConnectMode()
+        {
+            IsConnectMode = !IsConnectMode;
+            ConnectSource = null;
+            IsPlacingMode = false;
+            PaletteSelection = null;
+            StatusText = IsConnectMode ? "Connect Mode: Click source machine, then target machine." : "Connect mode disabled.";
+        }
+
+        [RelayCommand]
+        private void SetConnectSource(Guid machineId)
+        {
+            if (!IsConnectMode) return;
+            var machine = Layout.Machines.FirstOrDefault(m => m.Id == machineId);
+            if (machine == null) return;
+            ConnectSource = machine;
+            StatusText = $"Selected source: {machine.DisplayName}. Click target machine.";
+        }
+
+        [RelayCommand]
+        private void ConnectToTarget(Guid machineId)
+        {
+            if (!IsConnectMode || ConnectSource == null) return;
+            if (ConnectSource.Id == machineId)
+            {
+                StatusText = "Cannot connect machine to itself.";
+                return;
+            }
+            var conn = new MachineConnection
+            {
+                SourceId = ConnectSource.Id,
+                TargetId = machineId,
+            };
+            if (Layout.AddConnection(conn))
+            {
+                var target = Layout.Machines.FirstOrDefault(m => m.Id == machineId);
+                StatusText = $"Connected {ConnectSource.DisplayName} -> {target?.DisplayName ?? "?"}";
+                ConnectSource = null;
+                OnPropertyChanged(nameof(Layout));
+            }
+            else
+            {
+                StatusText = "Connection already exists.";
+            }
+        }
+
+        [RelayCommand]
         private void ClearLayout()
         {
             Layout.Clear();
             SelectedMachine = null;
+            ConnectSource = null;
             StatusText = "Layout cleared.";
             UpdateStats();
         }
