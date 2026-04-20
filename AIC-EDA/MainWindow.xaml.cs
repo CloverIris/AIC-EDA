@@ -19,6 +19,7 @@ namespace AIC_EDA
             NavView.SelectedItem = NavView.MenuItems[0];
             NavigateToPage("RecipeBrowser");
             UpdateProjectInfo();
+            StepBar.SetActiveStep(0);
         }
 
         private void NavView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
@@ -40,18 +41,23 @@ namespace AIC_EDA
             {
                 case "RecipeBrowser":
                     ContentFrame.Navigate(typeof(RecipeBrowserPage));
+                    StepBar.SetActiveStep(0);
                     break;
                 case "RecipeCompiler":
                     ContentFrame.Navigate(typeof(RecipeCompilerPage), parameter);
+                    StepBar.SetActiveStep(1);
                     break;
                 case "LayoutPreview":
                     ContentFrame.Navigate(typeof(LayoutPreviewPage));
+                    StepBar.SetActiveStep(2);
                     break;
                 case "LayoutDesigner":
                     ContentFrame.Navigate(typeof(LayoutDesignerPage));
+                    StepBar.SetActiveStep(2);
                     break;
                 case "BlueprintExport":
                     ContentFrame.Navigate(typeof(BlueprintExportPage));
+                    StepBar.SetActiveStep(3);
                     break;
             }
         }

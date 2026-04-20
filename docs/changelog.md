@@ -6,6 +6,42 @@
 
 ---
 
+## [1.2.0] - 2026-04-20
+
+### 新增
+
+#### 合成链条 Flyout (RecipeBrowser)
+- **Minecraft 风格合成网格** — 点击 RecipeBrowser 任意物品，弹出 3×3  crafting grid，展示配方输入/输出
+- **配方选择器** — 支持多个配方时横向切换
+- **递归上游链条树** — 展示原材料 → 中间产物 → 目标物品的完整链条，含速率与机器信息
+- **TeachingTip 定位** — Flyout 精准定位到点击的 GridViewItem
+
+#### Dashboard 工业指挥中心（替换 WelcomeWindow）
+- **2×2 田字格布局** — 启动页完全重写为四象限工业仪表盘
+- **Q1: 资产录入 & 均衡解算** — ComboBox+Slider 录入已有资产，实时雷达图显示五大方向权重，一键计算均衡布局建议
+- **Q2: 发展优先级 & RoadMap** — 初级/中级/高级三级多选，自动生成原材料 CheckList（含进度条）和分阶段 RoadMap（含电力/占地预估）
+- **Q3: 多目标优化/复用** — 多选最终产品+设定速率，自动分析共享中间产物，给出合并建线建议
+- **Q4: 产线模拟/瓶颈热力图** — 简化产线节点动画，Play/Pause 控制，红黄绿实时显示瓶颈状态
+
+#### 步骤指示器 (Step Indicator)
+- MainWindow 顶部新增全局步骤条：Setup → Synthesize → Layout → Export
+- 当前步骤黄色高亮，已完成绿色打勾，未开始灰色
+- 随页面导航自动同步
+
+### 改进
+
+#### 3D 等距视图修复
+- **网格范围限制** — 不再绘制无限延伸的 60×40 全范围网格，改为只在机器包围盒 + 8 格边距内绘制
+- **视觉降级** — 网格线透明度从 0x30 降至 0x18，改为 2,4 虚线，颜色更暗
+- **背景层次分离** — RedrawCanvas 先绘制 #0A0A0A 深色底板，再画网格/机器/连接
+
+### 修复
+- `EndfieldButtonStyle` 缺失导致的启动 XamlParseException
+- `UpdateCanvasSize` 中 Width/Height 可能为 NaN/负值/无穷导致的 ArgumentException
+- 画布渲染异常时增加 try-catch + 红色边缘闪烁非阻塞警告
+
+---
+
 ## [1.1.0] - 2026-04-20
 
 ### 新增

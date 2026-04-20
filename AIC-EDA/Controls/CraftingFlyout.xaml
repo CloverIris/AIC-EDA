@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="AIC_EDA.Controls.CraftingFlyout"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    MaxWidth="460">
+
+    <Border Background="{StaticResource SurfaceCardBrush}" BorderBrush="{StaticResource BorderDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="16">
+        <StackPanel Spacing="12">
+            <!-- Header -->
+            <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                <FontIcon x:Name="HeaderIcon" FontSize="36"/>
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock x:Name="HeaderName" FontSize="16" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                    <TextBlock x:Name="HeaderNameEN" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}"/>
+                    <Border Background="{StaticResource SurfaceElevatedBrush}" CornerRadius="4" Padding="6,2" HorizontalAlignment="Left" Margin="0,4,0,0">
+                        <TextBlock x:Name="HeaderCategory" FontSize="10" Foreground="{StaticResource TextSecondaryBrush}"/>
+                    </Border>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Recipe selector (if multiple recipes) -->
+            <StackPanel x:Name="RecipeSelectorPanel" Spacing="6" Visibility="Collapsed">
+                <TextBlock Text="SELECT RECIPE" Style="{StaticResource CaptionLabelStyle}"/>
+                <StackPanel x:Name="RecipeButtonsPanel" Orientation="Horizontal" Spacing="6"/>
+            </StackPanel>
+
+            <!-- Minecraft-style crafting grid -->
+            <StackPanel x:Name="CraftingGridPanel" Spacing="8">
+                <TextBlock Text="CRAFTING GRID" Style="{StaticResource CaptionLabelStyle}"/>
+                <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center">
+                    <!-- 3x3 Input Grid -->
+                    <Grid x:Name="CraftingGrid" Width="150" Height="150">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+
+                    <!-- Arrow -->
+                    <FontIcon Glyph="&#xE72A;" FontSize="24" Foreground="{StaticResource TextTertiaryBrush}" VerticalAlignment="Center"/>
+
+                    <!-- Output -->
+                    <Border Width="64" Height="64" Background="{StaticResource SurfaceElevatedBrush}" BorderBrush="{StaticResource BorderAccentBrush}" BorderThickness="2" CornerRadius="4">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="2">
+                            <FontIcon x:Name="OutputIcon" FontSize="24"/>
+                            <TextBlock x:Name="OutputName" FontSize="9" Foreground="{StaticResource TextPrimaryBrush}" TextAlignment="Center" TextTrimming="CharacterEllipsis" MaxWidth="56"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Recipe details -->
+                <StackPanel x:Name="RecipeDetailsPanel" Orientation="Horizontal" Spacing="16" HorizontalAlignment="Center" Margin="0,4,0,0">
+                    <TextBlock x:Name="RecipeMachineText" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+                    <TextBlock x:Name="RecipeDurationText" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+                    <TextBlock x:Name="RecipePowerText" FontSize="11" Foreground="{StaticResource AccentOrangeBrush}"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- No recipe message -->
+            <TextBlock x:Name="NoRecipeText" Text="Raw Material — No crafting recipe required." FontSize="12" Foreground="{StaticResource TextTertiaryBrush}" TextAlignment="Center" Visibility="Collapsed"/>
+
+            <!-- Upstream chain tree -->
+            <StackPanel x:Name="ChainTreePanel" Spacing="8">
+                <TextBlock Text="UPSTREAM CHAIN" Style="{StaticResource CaptionLabelStyle}"/>
+                <Border Background="{StaticResource SurfaceElevatedBrush}" CornerRadius="4" Padding="8" MaxHeight="220">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel x:Name="ChainTreeStack" Spacing="2"/>
+                    </ScrollViewer>
+                </Border>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</UserControl>

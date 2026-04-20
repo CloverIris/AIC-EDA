@@ -262,5 +262,10 @@
                 </StackPanel>
             </StackPanel>
         </Border>
+
+        <!-- Error warning flash overlay -->
+        <Border x:Name="ErrorFlashBorder" Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="3"
+                BorderBrush="#FF3D00" BorderThickness="0" IsHitTestVisible="False"
+                Background="Transparent"/>
     </Grid>
 </Page>

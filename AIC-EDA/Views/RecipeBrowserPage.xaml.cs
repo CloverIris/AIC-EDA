@@ -1,3 +1,4 @@
+using AIC_EDA.Controls;
 using AIC_EDA.Models;
 using AIC_EDA.ViewModels;
 using Microsoft.UI.Xaml;
@@ -82,6 +83,34 @@ namespace AIC_EDA.Views
             if (App.MainWindow is MainWindow main)
             {
                 main.NavigateToPage("RecipeCompiler", ViewModel.SelectedItem);
+            }
+        }
+
+        private void ItemsGridView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (e.ClickedItem is not Item clickedItem) return;
+
+            var flyoutContent = new CraftingFlyout();
+            flyoutContent.LoadItem(clickedItem);
+
+            var flyout = new Flyout
+            {
+                Content = flyoutContent,
+                Placement = Microsoft.UI.Xaml.Controls.Primitives.FlyoutPlacementMode.Right,
+            };
+
+            // Find the container for the clicked item to position the flyout
+            if (sender is GridView gridView)
+            {
+                var container = gridView.ContainerFromItem(clickedItem) as GridViewItem;
+                if (container != null)
+                {
+                    flyout.ShowAt(container);
+                }
+                else
+                {
+                    flyout.ShowAt(gridView);
+                }
             }
         }
     }

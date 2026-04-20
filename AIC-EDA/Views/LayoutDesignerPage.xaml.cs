@@ -83,8 +83,20 @@ namespace AIC_EDA.Views
         // ===== CANVAS SIZE =====
         private void UpdateCanvasSize()
         {
-            double w = CanvasGridW * _gridCellPixels * _zoomFactor + _panOffset.X * 2;
-            double h = CanvasGridH * _gridCellPixels * _zoomFactor + _panOffset.Y * 2;
+            double baseW = CanvasGridW * _gridCellPixels * _zoomFactor;
+            double baseH = CanvasGridH * _gridCellPixels * _zoomFactor;
+            double w = baseW + _panOffset.X * 2;
+            double h = baseH + _panOffset.Y * 2;
+
+            // Guard against NaN, Infinity, and negative values which crash WinUI
+            if (!double.IsFinite(w) || w < 0) w = baseW > 0 ? baseW : CanvasGridW * _gridCellPixels;
+            if (!double.IsFinite(h) || h < 0) h = baseH > 0 ? baseH : CanvasGridH * _gridCellPixels;
+
+            // Clamp to reasonable max to prevent overflow
+            const double maxDim = 100000;
+            if (w > maxDim) w = maxDim;
+            if (h > maxDim) h = maxDim;
+
             DesignCanvas.Width = w;
             DesignCanvas.Height = h;
             CanvasInfoText.Text = $"Grid: {_gridCellPixels:F0}px | Zoom: {_zoomFactor * 100:F0}%";
@@ -94,11 +106,69 @@ namespace AIC_EDA.Views
         private void RedrawCanvas()
         {
             if (!_isLoaded) return;
-            DesignCanvas.Children.Clear();
-            UpdateCanvasSize();
+            try
+            {
+                DesignCanvas.Children.Clear();
+                UpdateCanvasSize();
 
-            DrawGrid();
-            DrawMachines();
+                // Dark background plate to separate grid from window background
+                var bgPlate = new Rectangle
+                {
+                    Width = DesignCanvas.Width,
+                    Height = DesignCanvas.Height,
+                    Fill = new SolidColorBrush(Color.FromArgb(0xFF, 0x0A, 0x0A, 0x0A)),
+                };
+                DesignCanvas.Children.Add(bgPlate);
+
+                DrawGrid();
+                DrawMachines();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[LayoutDesigner] Redraw error: {ex.Message}");
+                FlashErrorWarning();
+            }
+        }
+
+        /// <summary>
+        /// Calculate bounding box of all placed machines plus padding.
+        /// Returns (minX, minY, maxX, maxY) in grid coordinates.
+        /// </summary>
+        private (int minX, int minY, int maxX, int maxY) GetGridBounds(int padding = 8)
+        {
+            var machines = ViewModel.Layout.Machines;
+            if (machines.Count == 0)
+            {
+                // Default small area when no machines placed
+                return (0, 0, Math.Min(20, CanvasGridW), Math.Min(12, CanvasGridH));
+            }
+
+            int minX = machines.Min(m => m.GridX);
+            int minY = machines.Min(m => m.GridY);
+            int maxX = machines.Max(m => m.GridX + m.GridWidth);
+            int maxY = machines.Max(m => m.GridY + m.GridDepth);
+
+            minX = Math.Max(0, minX - padding);
+            minY = Math.Max(0, minY - padding);
+            maxX = Math.Min(CanvasGridW, maxX + padding);
+            maxY = Math.Min(CanvasGridH, maxY + padding);
+
+            return (minX, minY, maxX, maxY);
+        }
+
+        private async void FlashErrorWarning()
+        {
+            try
+            {
+                ErrorFlashBorder.BorderThickness = new Thickness(4);
+                await System.Threading.Tasks.Task.Delay(200);
+                ErrorFlashBorder.BorderThickness = new Thickness(0);
+                await System.Threading.Tasks.Task.Delay(150);
+                ErrorFlashBorder.BorderThickness = new Thickness(4);
+                await System.Threading.Tasks.Task.Delay(200);
+                ErrorFlashBorder.BorderThickness = new Thickness(0);
+            }
+            catch { /* Ignore flash errors */ }
         }
 
         private void DrawGrid()
@@ -112,46 +182,52 @@ namespace AIC_EDA.Views
         private void DrawGridTopDown()
         {
             double cell = _gridCellPixels * _zoomFactor;
-            double width = CanvasGridW * cell;
-            double height = CanvasGridH * cell;
+            var (minX, minY, maxX, maxY) = GetGridBounds(padding: 6);
 
-            // Background
+            double width = (maxX - minX) * cell;
+            double height = (maxY - minY) * cell;
+            double originX = _panOffset.X + minX * cell;
+            double originY = _panOffset.Y + minY * cell;
+
+            // Subtle background fill for active area
             var bg = new Rectangle
             {
                 Width = width,
                 Height = height,
-                Fill = new SolidColorBrush(Color.FromArgb(0x30, 0x1A, 0x1A, 0x1A)),
+                Fill = new SolidColorBrush(Color.FromArgb(0x18, 0x1A, 0x1A, 0x1A)),
             };
-            Canvas.SetLeft(bg, _panOffset.X);
-            Canvas.SetTop(bg, _panOffset.Y);
+            Canvas.SetLeft(bg, originX);
+            Canvas.SetTop(bg, originY);
             DesignCanvas.Children.Add(bg);
 
-            // Vertical lines
-            for (int i = 0; i <= CanvasGridW; i++)
+            // Vertical lines (dashed, dim)
+            for (int i = minX; i <= maxX; i++)
             {
                 var line = new Line
                 {
                     X1 = _panOffset.X + i * cell,
-                    Y1 = _panOffset.Y,
+                    Y1 = originY,
                     X2 = _panOffset.X + i * cell,
-                    Y2 = _panOffset.Y + height,
-                    Stroke = new SolidColorBrush(Color.FromArgb(0x40, 0xFF, 0xFF, 0xFF)),
-                    StrokeThickness = (i % 5 == 0) ? 1.5 : 0.5,
+                    Y2 = originY + height,
+                    Stroke = new SolidColorBrush(Color.FromArgb(0x20, 0xFF, 0xFF, 0xFF)),
+                    StrokeThickness = (i % 5 == 0) ? 1.0 : 0.5,
+                    StrokeDashArray = new DoubleCollection { 2, 4 },
                 };
                 DesignCanvas.Children.Add(line);
             }
 
             // Horizontal lines
-            for (int i = 0; i <= CanvasGridH; i++)
+            for (int i = minY; i <= maxY; i++)
             {
                 var line = new Line
                 {
-                    X1 = _panOffset.X,
+                    X1 = originX,
                     Y1 = _panOffset.Y + i * cell,
-                    X2 = _panOffset.X + width,
+                    X2 = originX + width,
                     Y2 = _panOffset.Y + i * cell,
-                    Stroke = new SolidColorBrush(Color.FromArgb(0x40, 0xFF, 0xFF, 0xFF)),
-                    StrokeThickness = (i % 5 == 0) ? 1.5 : 0.5,
+                    Stroke = new SolidColorBrush(Color.FromArgb(0x20, 0xFF, 0xFF, 0xFF)),
+                    StrokeThickness = (i % 5 == 0) ? 1.0 : 0.5,
+                    StrokeDashArray = new DoubleCollection { 2, 4 },
                 };
                 DesignCanvas.Children.Add(line);
             }
@@ -165,8 +241,8 @@ namespace AIC_EDA.Views
                 StrokeThickness = 2,
                 Fill = null,
             };
-            Canvas.SetLeft(border, _panOffset.X);
-            Canvas.SetTop(border, _panOffset.Y);
+            Canvas.SetLeft(border, originX);
+            Canvas.SetTop(border, originY);
             DesignCanvas.Children.Add(border);
         }
 
@@ -175,61 +251,69 @@ namespace AIC_EDA.Views
             double cell = _gridCellPixels * _zoomFactor;
             double isoW = cell;
             double isoH = cell * 0.5;
-            double centerX = _panOffset.X + CanvasGridW * isoW * 0.5;
 
-            // Draw isometric grid lines
-            var gridBrush = new SolidColorBrush(Color.FromArgb(0x30, 0xFF, 0xFF, 0xFF));
-            var majorGridBrush = new SolidColorBrush(Color.FromArgb(0x50, 0xFF, 0xFF, 0xFF));
+            var (minGx, minGy, maxGx, maxGy) = GetGridBounds(padding: 8);
+            int gw = maxGx - minGx;
+            int gh = maxGy - minGy;
 
-            // Diagonal lines (\\ direction)
-            for (int i = -CanvasGridH; i <= CanvasGridW; i++)
+            double centerX = _panOffset.X + (minGx + maxGx) * isoW * 0.5;
+            double originY = _panOffset.Y + minGy * isoH;
+
+            // Dim grid brushes
+            var gridBrush = new SolidColorBrush(Color.FromArgb(0x18, 0xFF, 0xFF, 0xFF));
+            var majorGridBrush = new SolidColorBrush(Color.FromArgb(0x30, 0xFF, 0xFF, 0xFF));
+            var dashPattern = new DoubleCollection { 2, 4 };
+
+            // Diagonal lines (\\ direction) — only within bounds
+            for (int i = -gh; i <= gw; i++)
             {
                 double x1 = centerX + i * isoW * 0.5;
-                double y1 = _panOffset.Y + Math.Max(0, -i) * isoH * 0.5;
-                double x2 = centerX + (i + CanvasGridH) * isoW * 0.5;
-                double y2 = _panOffset.Y + CanvasGridH * isoH * 0.5 + Math.Min(0, -i) * isoH * 0.5;
+                double y1 = originY + Math.Max(0, -i) * isoH * 0.5;
+                double x2 = centerX + (i + gh) * isoW * 0.5;
+                double y2 = originY + gh * isoH * 0.5 + Math.Min(0, -i) * isoH * 0.5;
 
-                // Clamp to visible area approximately
                 var line = new Line
                 {
                     X1 = x1, Y1 = y1, X2 = x2, Y2 = y2,
                     Stroke = (i % 5 == 0) ? majorGridBrush : gridBrush,
                     StrokeThickness = (i % 5 == 0) ? 1.0 : 0.5,
+                    StrokeDashArray = dashPattern,
                 };
                 DesignCanvas.Children.Add(line);
             }
 
             // Diagonal lines (// direction)
-            for (int i = 0; i <= CanvasGridW + CanvasGridH; i++)
+            for (int i = 0; i <= gw + gh; i++)
             {
-                double x1 = centerX + (i - CanvasGridH) * isoW * 0.5;
-                double y1 = _panOffset.Y + Math.Max(0, CanvasGridH - i) * isoH * 0.5;
+                double x1 = centerX + (i - gh) * isoW * 0.5;
+                double y1 = originY + Math.Max(0, gh - i) * isoH * 0.5;
                 double x2 = centerX + i * isoW * 0.5;
-                double y2 = _panOffset.Y + Math.Min(CanvasGridH, i) * isoH * 0.5;
+                double y2 = originY + Math.Min(gh, i) * isoH * 0.5;
 
                 var line = new Line
                 {
                     X1 = x1, Y1 = y1, X2 = x2, Y2 = y2,
                     Stroke = (i % 5 == 0) ? majorGridBrush : gridBrush,
                     StrokeThickness = (i % 5 == 0) ? 1.0 : 0.5,
+                    StrokeDashArray = dashPattern,
                 };
                 DesignCanvas.Children.Add(line);
             }
 
-            // Border diamond
+            // Border diamond (limited to bounds)
             var borderPoints = new PointCollection
             {
-                new Point(centerX, _panOffset.Y),
-                new Point(centerX + CanvasGridW * isoW * 0.5, _panOffset.Y + CanvasGridH * isoH * 0.5),
-                new Point(centerX, _panOffset.Y + CanvasGridH * isoH),
-                new Point(centerX - CanvasGridW * isoW * 0.5, _panOffset.Y + CanvasGridH * isoH * 0.5),
+                new Point(centerX, originY),
+                new Point(centerX + gw * isoW * 0.5, originY + gh * isoH * 0.5),
+                new Point(centerX, originY + gh * isoH),
+                new Point(centerX - gw * isoW * 0.5, originY + gh * isoH * 0.5),
             };
             var border = new Polygon
             {
                 Points = borderPoints,
                 Stroke = new SolidColorBrush(Color.FromArgb(0x80, 0xFF, 0xD6, 0x00)),
                 StrokeThickness = 2,
-                Fill = new SolidColorBrush(Color.FromArgb(0x15, 0x1A, 0x1A, 0x1A)),
+                Fill = new SolidColorBrush(Color.FromArgb(0x10, 0x1A, 0x1A, 0x1A)),
             };
             DesignCanvas.Children.Add(border);
         }

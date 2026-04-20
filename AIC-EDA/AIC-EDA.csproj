@@ -73,6 +73,9 @@
     <Page Update="Views\**\*.xaml">
       <Link>%(Filename)%(Extension)</Link>
     </Page>
+    <Page Update="Controls\**\*.xaml">
+      <Link>%(Filename)%(Extension)</Link>
+    </Page>
   </ItemGroup>
 
 </Project>

@@ -302,6 +302,75 @@ namespace AIC_EDA.Services
         }
 
         public bool IsLoaded => _loaded;
+
+        /// <summary>
+        /// Build a recursive crafting chain for the target item.
+        /// </summary>
+        /// <param name="itemId">Target item ID</param>
+        /// <param name="requiredRatePerMinute">Desired output rate per minute</param>
+        /// <param name="maxDepth">Max recursion depth to prevent cycles</param>
+        /// <returns>Root chain node, or null if item not found</returns>
+        public CraftingChainNode? GetCraftingChain(string itemId, double requiredRatePerMinute = 60, int maxDepth = 6)
+        {
+            return BuildChainNode(itemId, requiredRatePerMinute, maxDepth, 0, new HashSet<string>());
+        }
+
+        private CraftingChainNode? BuildChainNode(string itemId, double requiredRatePerMinute, int maxDepth, int currentDepth, HashSet<string> visited)
+        {
+            if (currentDepth > maxDepth || visited.Contains(itemId))
+                return null;
+
+            var item = GetItem(itemId);
+            if (item == null) return null;
+
+            visited.Add(itemId);
+
+            // Find recipes that produce this item
+            var recipes = FindRecipesByOutput(itemId);
+            Recipe? primaryRecipe = recipes.FirstOrDefault(r => r.IsPrimary) ?? recipes.FirstOrDefault();
+
+            var node = new CraftingChainNode
+            {
+                Item = item,
+                Recipe = primaryRecipe,
+                RequiredRatePerMinute = requiredRatePerMinute,
+                Depth = currentDepth,
+            };
+
+            if (primaryRecipe != null)
+            {
+                // Calculate how many recipes needed per minute
+                double outputRate = primaryRecipe.GetOutputRatePerMinute(itemId);
+                double recipeCount = outputRate > 0 ? requiredRatePerMinute / outputRate : 1;
+                node.RequiredAmount = recipeCount;
+
+                // Build upstream nodes for each input
+                foreach (var inputKv in primaryRecipe.Inputs)
+                {
+                    string inputId = inputKv.Key;
+                    double inputPerRecipe = inputKv.Value;
+                    double inputRatePerMinute = inputPerRecipe * 60.0 / primaryRecipe.Duration * recipeCount;
+
+                    var inputNode = BuildChainNode(inputId, inputRatePerMinute, maxDepth, currentDepth + 1, visited);
+                    if (inputNode != null)
+                        node.Inputs.Add(inputNode);
+                }
+            }
+
+            visited.Remove(itemId);
+            return node;
+        }
+
+        /// <summary>
+        /// Get all recipes that can produce the target item, sorted by primary first.
+        /// </summary>
+        public List<Recipe> GetProductionRecipes(string itemId)
+        {
+            return _recipes
+                .Where(r => r.Outputs.ContainsKey(itemId))
+                .OrderByDescending(r => r.IsPrimary)
+                .ToList();
+        }
     }
 
     public class RecipeDatabaseJson
