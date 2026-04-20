@@ -156,10 +156,9 @@ namespace AIC_EDA
         // ===== TOOLBAR HANDLERS =====
         private void ToolbarZoomIn_Click(object sender, RoutedEventArgs e)
         {
-            // Forward to LayoutPreview if active
             if (ContentFrame.Content is LayoutPreviewPage page)
             {
-                // page.ZoomIn(); // Would need to expose this method
+                page.ZoomIn();
             }
         }
 
@@ -167,7 +166,7 @@ namespace AIC_EDA
         {
             if (ContentFrame.Content is LayoutPreviewPage page)
             {
-                // page.ZoomOut();
+                page.ZoomOut();
             }
         }
 

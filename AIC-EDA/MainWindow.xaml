@@ -111,12 +111,11 @@
         <!-- ===== MAIN CONTENT AREA ===== -->
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Left Navigation -->
+            <!-- NavigationView fills all content space; Frame is inside it -->
             <NavigationView x:Name="NavView"
                             Grid.Column="0"
                             IsBackButtonVisible="Collapsed"
@@ -189,7 +188,7 @@
 
             <!-- ===== RIGHT TOOL PANEL ===== -->
             <Grid x:Name="RightToolPanel"
-                  Grid.Column="2"
+                  Grid.Column="1"
                   Width="260"
                   Background="{StaticResource SurfaceCardBrush}"
                   BorderBrush="{StaticResource BorderDefaultBrush}"

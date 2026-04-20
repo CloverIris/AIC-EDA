@@ -12,6 +12,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
@@ -19,7 +20,7 @@
         <StackPanel Grid.Row="0" Spacing="8" Margin="0,0,0,16">
             <TextBlock Text="[ FLOORPLAN_EF ]" Style="{StaticResource BracketTagStyle}"/>
             <TextBlock Text="FloorPlan &amp; Place" Style="{StaticResource SectionTitleStyle}"/>
-            <TextBlock Text="2D/3D 工厂布局预览与优化 — 设备摆放、传送带路由、电力网络覆盖" FontSize="13" Foreground="{StaticResource TextSecondaryBrush}"/>
+            <TextBlock Text="2D/3D 工厂布局预览与优化 — 网格化设备摆放、传送带路由、电力网络覆盖" FontSize="13" Foreground="{StaticResource TextSecondaryBrush}"/>
             <Border Height="1" Background="{StaticResource BorderDefaultBrush}" Margin="0,8,0,0"/>
         </StackPanel>
 
@@ -46,21 +47,65 @@
                 <Button Style="{StaticResource EndfieldGhostButtonStyle}" Padding="8,4" Click="ZoomOut_Click" ToolTipService.ToolTip="缩小">
                     <FontIcon Glyph="&#xE71F;" FontSize="14" Foreground="{StaticResource TextSecondaryBrush}"/>
                 </Button>
+                <Button Style="{StaticResource EndfieldGhostButtonStyle}" Padding="8,4" Click="ZoomReset_Click" ToolTipService.ToolTip="重置视图">
+                    <FontIcon Glyph="&#xE81C;" FontSize="14" Foreground="{StaticResource TextSecondaryBrush}"/>
+                </Button>
                 <Border Width="1" Background="{StaticResource BorderDefaultBrush}" Margin="4,2"/>
-                <ToggleButton x:Name="ShowConnectionsToggle" IsChecked="True" Padding="8,4" Background="Transparent" BorderThickness="0" ToolTipService.ToolTip="显示连接">
+                <ToggleButton x:Name="ShowConnectionsToggle" IsChecked="True" Padding="8,4" Background="Transparent" BorderThickness="0" ToolTipService.ToolTip="显示传送带">
                     <FontIcon Glyph="&#xE8AB;" FontSize="14" Foreground="{StaticResource TextSecondaryBrush}"/>
                 </ToggleButton>
                 <ToggleButton x:Name="ShowGridToggle" IsChecked="True" Padding="8,4" Background="Transparent" BorderThickness="0" ToolTipService.ToolTip="显示网格">
                     <FontIcon Glyph="&#xE80A;" FontSize="14" Foreground="{StaticResource TextSecondaryBrush}"/>
                 </ToggleButton>
+                <ToggleButton x:Name="ShowLabelsToggle" IsChecked="True" Padding="8,4" Background="Transparent" BorderThickness="0" ToolTipService.ToolTip="显示标签">
+                    <FontIcon Glyph="&#xE8D2;" FontSize="14" Foreground="{StaticResource TextSecondaryBrush}"/>
+                </ToggleButton>
+                <Border Width="1" Background="{StaticResource BorderDefaultBrush}" Margin="4,2"/>
+                <!-- Grid size selector -->
+                <ComboBox x:Name="GridSizeCombo" SelectedIndex="0" Width="90" Height="28" FontSize="11"
+                          Background="Transparent" BorderThickness="1"
+                          SelectionChanged="GridSizeCombo_SelectionChanged">
+                    <ComboBoxItem Content="40 px" Tag="40"/>
+                    <ComboBoxItem Content="70 px" Tag="70"/>
+                </ComboBox>
             </StackPanel>
 
-            <!-- Zoom level indicator -->
-            <TextBlock Grid.Column="2" x:Name="ZoomText" Text="100%" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}" VerticalAlignment="Center" FontFamily="Consolas"/>
+            <!-- Info text -->
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                <TextBlock x:Name="GridInfoText" Text="Grid: 40 px" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}" FontFamily="Consolas"/>
+                <TextBlock x:Name="ZoomText" Text="Zoom: 100%" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}" FontFamily="Consolas"/>
+                <TextBlock x:Name="StatsText" Text="0 nodes" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}" FontFamily="Consolas"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- Legend -->
+        <Grid Grid.Row="2" Margin="0,0,0,8">
+            <StackPanel Orientation="Horizontal" Spacing="12">
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <Rectangle Width="12" Height="12" Fill="#1E90FF" RadiusX="2" RadiusY="2"/>
+                    <TextBlock Text="资源" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <Rectangle Width="12" Height="12" Fill="#FFA500" RadiusX="2" RadiusY="2"/>
+                    <TextBlock Text="加工" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <Rectangle Width="12" Height="12" Fill="#808080" RadiusX="2" RadiusY="2"/>
+                    <TextBlock Text="物流" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <Rectangle Width="12" Height="12" Fill="#FFD700" RadiusX="2" RadiusY="2"/>
+                    <TextBlock Text="电力" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <Rectangle Width="12" Height="12" Fill="#32CD32" RadiusX="2" RadiusY="2"/>
+                    <TextBlock Text="农业" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+                </StackPanel>
+            </StackPanel>
         </Grid>
 
         <!-- Canvas Area -->
-        <Border Grid.Row="2"
+        <Border Grid.Row="3"
                 BorderBrush="{StaticResource BorderDefaultBrush}"
                 BorderThickness="1"
                 CornerRadius="4"
@@ -71,10 +116,9 @@
                         Background="Transparent"
                         PointerPressed="Canvas_PointerPressed"
                         PointerMoved="Canvas_PointerMoved"
-                        PointerReleased="Canvas_PointerReleased"/>
-
-                <!-- Soft-rendered image (optional, for high-performance mode) -->
-                <Image x:Name="LayoutImage" Stretch="None" Visibility="Collapsed"/>
+                        PointerReleased="Canvas_PointerReleased"
+                        PointerWheelChanged="Canvas_PointerWheelChanged"
+                        SizeChanged="Canvas_SizeChanged"/>
 
                 <!-- Placeholder -->
                 <StackPanel x:Name="PlaceholderPanel" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">

@@ -30,7 +30,7 @@ namespace AIC_EDA.Core
             var routes = new List<BeltRoute>();
             var occupied = new HashSet<(int x, int z)>();
 
-            // 标记所有设备位置为障碍物
+            // 标记所有设备位置为障碍物 (position = bottom-left corner)
             foreach (var node in graph.Nodes)
             {
                 if (node.Position == null) continue;
@@ -40,8 +40,8 @@ namespace AIC_EDA.Core
                 var cx = (int)node.Position.Value.X;
                 var cz = (int)node.Position.Value.Z;
 
-                for (int dx = -w / 2; dx <= w / 2; dx++)
-                    for (int dz = -d / 2; dz <= d / 2; dz++)
+                for (int dx = 0; dx < w; dx++)
+                    for (int dz = 0; dz < d; dz++)
                         occupied.Add((cx + dx, cz + dz));
             }
 
