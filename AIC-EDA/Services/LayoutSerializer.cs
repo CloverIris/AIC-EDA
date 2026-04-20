@@ -42,6 +42,14 @@ namespace AIC_EDA.Services
                     Label = m.Label,
                     RecipeId = m.RecipeId,
                 }),
+                Connections = layout.Connections.ConvertAll(c => new ConnectionDto
+                {
+                    Id = c.Id,
+                    SourceId = c.SourceId,
+                    TargetId = c.TargetId,
+                    ItemId = c.ItemId,
+                    Type = c.Type.ToString(),
+                }),
             };
             return JsonSerializer.Serialize(dto, JsonOptions);
         }
@@ -79,6 +87,21 @@ namespace AIC_EDA.Services
                 }
             }
 
+            foreach (var cd in dto.Connections)
+            {
+                if (Enum.TryParse<ConnectionType>(cd.Type, out var ct))
+                {
+                    layout.Connections.Add(new MachineConnection
+                    {
+                        Id = cd.Id,
+                        SourceId = cd.SourceId,
+                        TargetId = cd.TargetId,
+                        ItemId = cd.ItemId,
+                        Type = ct,
+                    });
+                }
+            }
+
             return layout;
         }
 
@@ -105,6 +128,7 @@ namespace AIC_EDA.Services
             public int CanvasGridWidth { get; set; }
             public int CanvasGridHeight { get; set; }
             public List<MachineDto> Machines { get; set; } = new();
+            public List<ConnectionDto> Connections { get; set; } = new();
         }
 
         private class MachineDto
@@ -116,6 +140,15 @@ namespace AIC_EDA.Services
             public int Rotation { get; set; }
             public string? Label { get; set; }
             public string? RecipeId { get; set; }
+        }
+
+        private class ConnectionDto
+        {
+            public Guid Id { get; set; }
+            public Guid SourceId { get; set; }
+            public Guid TargetId { get; set; }
+            public string? ItemId { get; set; }
+            public string Type { get; set; } = "";
         }
     }
 }
