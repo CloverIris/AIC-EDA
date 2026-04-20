@@ -238,12 +238,21 @@
 
                 <Border Grid.Row="2" Height="1" Background="{StaticResource BorderDefaultBrush}"/>
 
+                <Border Grid.Row="2" Height="1" Background="{StaticResource BorderDefaultBrush}"/>
+
                 <!-- Mini Navigation / Quick Actions -->
                 <StackPanel Grid.Row="3" Spacing="4" Padding="12">
                     <TextBlock Text="QUICK ACTIONS" Style="{StaticResource CaptionLabelStyle}" Margin="0,0,0,8"/>
                     <Button Content="Compile Graph" Style="{StaticResource EndfieldOutlineButtonStyle}" HorizontalAlignment="Stretch" Click="MenuCompile_Click"/>
-                    <Button Content="Run Layout" Style="{StaticResource EndfieldOutlineButtonStyle}" HorizontalAlignment="Stretch" Click="MenuOptimize_Click"/>
+                    <Button Content="Layout Designer" Style="{StaticResource EndfieldOutlineButtonStyle}" HorizontalAlignment="Stretch" Click="MenuLayoutDesigner_Click"/>
                     <Button Content="Export Blueprint" Style="{StaticResource EndfieldOutlineButtonStyle}" HorizontalAlignment="Stretch" Click="MenuExportJson_Click"/>
+
+                    <Border Height="1" Background="{StaticResource BorderDefaultBrush}" Margin="0,8"/>
+
+                    <StackPanel Spacing="2" HorizontalAlignment="Center">
+                        <TextBlock Text="AIC-EDA v1.1.0" FontSize="10" Foreground="{StaticResource TextDisabledBrush}" HorizontalAlignment="Center" FontFamily="Consolas"/>
+                        <TextBlock Text="Arknights: Endfield" FontSize="9" Foreground="{StaticResource TextDisabledBrush}" HorizontalAlignment="Center"/>
+                    </StackPanel>
                 </StackPanel>
             </Grid>
         </Grid>

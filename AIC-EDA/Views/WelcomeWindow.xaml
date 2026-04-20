@@ -58,7 +58,7 @@
             </StackPanel>
 
             <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right">
-                <TextBlock x:Name="VersionText" Text="v1.0.0" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}" HorizontalAlignment="Right"/>
+                <TextBlock x:Name="VersionText" Text="v1.1.0" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}" HorizontalAlignment="Right"/>
                 <TextBlock Text="WinUI 3 / .NET 8" FontSize="10" Foreground="{StaticResource TextDisabledBrush}" HorizontalAlignment="Right" Margin="0,2,0,0"/>
             </StackPanel>
         </Grid>

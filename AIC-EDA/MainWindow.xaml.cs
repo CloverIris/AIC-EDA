@@ -142,6 +142,12 @@ namespace AIC_EDA
             NavView.SelectedItem = NavView.MenuItems[2];
         }
 
+        private void MenuLayoutDesigner_Click(object sender, RoutedEventArgs e)
+        {
+            ContentFrame.Navigate(typeof(LayoutDesignerPage));
+            NavView.SelectedItem = NavView.MenuItems[3];
+        }
+
         private void MenuRunSTA_Click(object sender, RoutedEventArgs e)
         {
             // TODO: Run throughput STA
