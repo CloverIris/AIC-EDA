@@ -1,10 +1,14 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using AIC_EDA.Models;
+using AIC_EDA.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
+using Windows.Storage;
+using Windows.Storage.Pickers;
 
 namespace AIC_EDA.ViewModels
 {
@@ -202,6 +206,92 @@ namespace AIC_EDA.ViewModels
         private void SetGridSize(int size)
         {
             Layout.GridSize = size;
+            OnPropertyChanged(nameof(Layout));
+        }
+
+        [RelayCommand]
+        private async Task SaveLayout()
+        {
+            var savePicker = new FileSavePicker();
+            savePicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
+            savePicker.FileTypeChoices.Add("JSON Layout", new List<string> { ".json" });
+            savePicker.SuggestedFileName = $"{Layout.Name.Replace(" ", "_")}_layout";
+
+            var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
+            WinRT.Interop.InitializeWithWindow.Initialize(savePicker, hwnd);
+
+            var file = await savePicker.PickSaveFileAsync();
+            if (file != null)
+            {
+                await LayoutSerializer.SaveToFileAsync(Layout, file);
+                StatusText = $"Layout saved to {file.Name}";
+            }
+        }
+
+        [RelayCommand]
+        private async Task LoadLayout()
+        {
+            var openPicker = new FileOpenPicker();
+            openPicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
+            openPicker.FileTypeFilter.Add(".json");
+
+            var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
+            WinRT.Interop.InitializeWithWindow.Initialize(openPicker, hwnd);
+
+            var file = await openPicker.PickSingleFileAsync();
+            if (file != null)
+            {
+                try
+                {
+                    var loaded = await LayoutSerializer.LoadFromFileAsync(file);
+                    Layout = loaded;
+                    SelectedMachine = null;
+                    UpdateStats();
+                    StatusText = $"Layout loaded from {file.Name}";
+                    OnPropertyChanged(nameof(Layout));
+                }
+                catch (Exception ex)
+                {
+                    StatusText = $"Failed to load: {ex.Message}";
+                }
+            }
+        }
+
+        [RelayCommand]
+        private void ImportFromGraph()
+        {
+            var graph = App.CurrentGraph;
+            if (graph == null || graph.Nodes.Count == 0)
+            {
+                StatusText = "No compiled graph available. Go to RTL Synthesis first.";
+                return;
+            }
+
+            Layout.Clear();
+            var planner = new Core.SpatialPlanner();
+            planner.AutoLayout2D(graph);
+
+            foreach (var node in graph.Nodes)
+            {
+                if (node.Position.HasValue)
+                {
+                    var machine = new PlacedMachine
+                    {
+                        MachineType = node.Recipe.Machine,
+                        GridX = (int)node.Position.Value.X,
+                        GridY = (int)node.Position.Value.Z,
+                        Rotation = node.Rotation,
+                        RecipeId = node.Recipe.Id,
+                        Label = node.DisplayName,
+                    };
+                    Layout.Machines.Add(machine);
+                }
+            }
+
+            Layout.ModifiedAt = DateTime.Now;
+            SelectedMachine = null;
+            UpdateStats();
+            StatusText = $"Imported {Layout.Machines.Count} machines from compiled graph.";
             OnPropertyChanged(nameof(Layout));
         }
 

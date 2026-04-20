@@ -376,11 +376,25 @@ namespace AIC_EDA.Views
             }
         }
 
+        private readonly Dictionary<MachineType, Button> _paletteButtons = new();
+
         private void MachineTypeNameText_Loaded(object sender, RoutedEventArgs e)
         {
             if (sender is TextBlock tb && tb.Tag is MachineType type)
             {
                 tb.Text = type.GetDisplayName();
+                var color = CategoryColors.GetValueOrDefault(type.GetCategory(), Colors.Gray);
+                // Find the parent FontIcon and set its color
+                if (tb.Parent is StackPanel sp)
+                {
+                    foreach (var child in sp.Children)
+                    {
+                        if (child is FontIcon icon)
+                        {
+                            icon.Foreground = new SolidColorBrush(color);
+                        }
+                    }
+                }
             }
         }
 
@@ -394,6 +408,23 @@ namespace AIC_EDA.Views
                     RedrawCanvas();
                 }
             }
+        }
+
+        private void ImportFromGraph_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.ImportFromGraphCommand.Execute(null);
+        }
+
+        private async void SaveLayout_Click(object sender, RoutedEventArgs e)
+        {
+            await ViewModel.SaveLayoutCommand.ExecuteAsync(null);
+            RedrawCanvas();
+        }
+
+        private async void LoadLayout_Click(object sender, RoutedEventArgs e)
+        {
+            await ViewModel.LoadLayoutCommand.ExecuteAsync(null);
+            RedrawCanvas();
         }
 
         private void ClearLayout_Click(object sender, RoutedEventArgs e)

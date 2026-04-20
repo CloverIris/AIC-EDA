@@ -44,6 +44,17 @@
                         <ComboBoxItem Content="40 px" Tag="40"/>
                         <ComboBoxItem Content="50 px" Tag="50"/>
                     </ComboBox>
+                    <Button Style="{StaticResource EndfieldGhostButtonStyle}" Padding="8,4" Click="ImportFromGraph_Click" ToolTipService.ToolTip="Import from Compiled Graph">
+                        <FontIcon Glyph="&#xE8B0;" FontSize="14" Foreground="{StaticResource AccentGreenBrush}"/>
+                    </Button>
+                    <Border Width="1" Background="{StaticResource BorderDefaultBrush}" Margin="4,2"/>
+                    <Button Style="{StaticResource EndfieldGhostButtonStyle}" Padding="8,4" Click="SaveLayout_Click" ToolTipService.ToolTip="Save Layout">
+                        <FontIcon Glyph="&#xE792;" FontSize="14" Foreground="{StaticResource AccentCyanBrush}"/>
+                    </Button>
+                    <Button Style="{StaticResource EndfieldGhostButtonStyle}" Padding="8,4" Click="LoadLayout_Click" ToolTipService.ToolTip="Load Layout">
+                        <FontIcon Glyph="&#xE8E5;" FontSize="14" Foreground="{StaticResource AccentCyanBrush}"/>
+                    </Button>
+                    <Border Width="1" Background="{StaticResource BorderDefaultBrush}" Margin="4,2"/>
                     <Button Style="{StaticResource EndfieldGhostButtonStyle}" Padding="8,4" Click="ClearLayout_Click" ToolTipService.ToolTip="Clear All">
                         <FontIcon Glyph="&#xE74D;" FontSize="14" Foreground="{StaticResource TextSecondaryBrush}"/>
                     </Button>
