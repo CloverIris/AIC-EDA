@@ -4,12 +4,13 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:AIC_EDA.Views"
+    xmlns:vm="using:AIC_EDA.ViewModels"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
     <Page.Resources>
-        <DataTemplate x:Key="NodeTemplate">
+        <DataTemplate x:Key="NodeTemplate" x:DataType="vm:ProductionNodeViewModel">
             <Grid Padding="12">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="40"/>
@@ -18,30 +19,29 @@
                     <ColumnDefinition Width="90"/>
                     <ColumnDefinition Width="110"/>
                 </Grid.ColumnDefinitions>
-                <!-- Layer badge -->
                 <Border Grid.Column="0" Width="28" Height="28" CornerRadius="4"
                         Background="{StaticResource SurfaceElevatedBrush}"
                         BorderBrush="{StaticResource BorderDefaultBrush}"
                         BorderThickness="1"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center">
-                    <TextBlock Text="{Binding Layer}" FontWeight="Bold" FontSize="12" Foreground="{StaticResource AccentCyanBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock Text="{x:Bind Layer}" FontWeight="Bold" FontSize="12" Foreground="{StaticResource AccentCyanBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Border>
                 <StackPanel Grid.Column="1" Spacing="2">
-                    <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" FontSize="13" Foreground="{StaticResource TextPrimaryBrush}"/>
-                    <TextBlock Text="{Binding RecipeName}" FontSize="10" Foreground="{StaticResource TextTertiaryBrush}"/>
-                    <TextBlock Text="{Binding Inputs}" FontSize="10" Foreground="{StaticResource TextDisabledBrush}"/>
+                    <TextBlock Text="{x:Bind DisplayName}" FontWeight="SemiBold" FontSize="13" Foreground="{StaticResource TextPrimaryBrush}"/>
+                    <TextBlock Text="{x:Bind RecipeName}" FontSize="10" Foreground="{StaticResource TextTertiaryBrush}"/>
+                    <TextBlock Text="{x:Bind Inputs}" FontSize="10" Foreground="{StaticResource TextDisabledBrush}"/>
                 </StackPanel>
-                <TextBlock Grid.Column="2" Text="{Binding Count}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="13" Foreground="{StaticResource TextPrimaryBrush}" FontWeight="SemiBold"/>
+                <TextBlock Grid.Column="2" Text="{x:Bind Count}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="13" Foreground="{StaticResource TextPrimaryBrush}" FontWeight="SemiBold"/>
                 <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="2">
-                    <TextBlock Text="{Binding PowerConsumption}" FontSize="11" Foreground="{StaticResource AccentOrangeBrush}"/>
+                    <TextBlock Text="{x:Bind PowerConsumption}" FontSize="11" Foreground="{StaticResource AccentOrangeBrush}"/>
                     <TextBlock Text="kW" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}"/>
                 </StackPanel>
-                <TextBlock Grid.Column="4" Text="{Binding Position}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}"/>
+                <TextBlock Grid.Column="4" Text="{x:Bind Position}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}"/>
             </Grid>
         </DataTemplate>
 
-        <DataTemplate x:Key="RawMaterialTemplate">
+        <DataTemplate x:Key="RawMaterialTemplate" x:DataType="vm:RawMaterialRequirement">
             <Grid Padding="10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -49,10 +49,10 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                     <Ellipse Width="8" Height="8" Fill="{StaticResource AccentYellowBrush}" VerticalAlignment="Center"/>
-                    <TextBlock Text="{Binding ItemName}" VerticalAlignment="Center" Foreground="{StaticResource TextPrimaryBrush}"/>
+                    <TextBlock Text="{x:Bind ItemName}" VerticalAlignment="Center" Foreground="{StaticResource TextPrimaryBrush}"/>
                 </StackPanel>
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right" Spacing="2">
-                    <TextBlock Text="{Binding RatePerMinute}" FontSize="13" Foreground="{StaticResource AccentYellowBrush}" FontWeight="SemiBold"/>
+                    <TextBlock Text="{x:Bind RatePerMinute}" FontSize="13" Foreground="{StaticResource AccentYellowBrush}" FontWeight="SemiBold"/>
                     <TextBlock Text="/min" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}"/>
                 </StackPanel>
             </Grid>
