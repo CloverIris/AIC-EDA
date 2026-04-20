@@ -601,6 +601,13 @@ namespace AIC_EDA.Views
                     ViewModel.MoveSelectedCommand.Execute(5001); // (0, 1) encoded
                     e.Handled = true;
                     break;
+                case VirtualKey.D:
+                    if (Microsoft.UI.Input.InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Control).HasFlag(Windows.UI.Core.CoreVirtualKeyStates.Down))
+                    {
+                        ViewModel.DuplicateSelectedCommand.Execute(null);
+                        e.Handled = true;
+                    }
+                    break;
                 case VirtualKey.Escape:
                     ViewModel.SelectedMachine = null;
                     ViewModel.IsPlacingMode = false;
@@ -727,6 +734,11 @@ namespace AIC_EDA.Views
             PropRotationText.Text = $"{machine.Rotation} degrees";
             var spec = machine.Spec;
             PropPowerText.Text = spec?.PowerRadius > 0 ? $"{spec.PowerRadius:F0} m" : "N/A";
+        }
+
+        private void Duplicate_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.DuplicateSelectedCommand.Execute(null);
         }
 
         private void Rotate_Click(object sender, RoutedEventArgs e)

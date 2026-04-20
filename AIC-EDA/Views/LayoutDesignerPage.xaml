@@ -214,6 +214,7 @@
 
                     <StackPanel Spacing="6">
                         <TextBlock Text="CONTROLS" Style="{StaticResource CaptionLabelStyle}"/>
+                        <Button Content="Duplicate (Ctrl+D)" Click="Duplicate_Click" Style="{StaticResource EndfieldButtonStyle}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
                         <Button Content="Rotate (R)" Click="Rotate_Click" Style="{StaticResource EndfieldButtonStyle}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
                         <Grid ColumnSpacing="6">
                             <Grid.ColumnDefinitions>

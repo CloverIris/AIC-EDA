@@ -194,6 +194,46 @@ namespace AIC_EDA.ViewModels
         }
 
         [RelayCommand]
+        private void DuplicateSelected()
+        {
+            if (SelectedMachine == null) return;
+            var original = SelectedMachine;
+            var copy = new PlacedMachine
+            {
+                MachineType = original.MachineType,
+                GridX = original.GridX + original.GridWidth,
+                GridY = original.GridY,
+                Rotation = original.Rotation,
+                Label = original.Label,
+                RecipeId = original.RecipeId,
+            };
+            if (Layout.AddMachine(copy))
+            {
+                SelectedMachine = copy;
+                StatusText = $"Duplicated {copy.DisplayName}";
+                UpdateStats();
+                OnPropertyChanged(nameof(Layout));
+            }
+            else
+            {
+                // Try below
+                copy.GridX = original.GridX;
+                copy.GridY = original.GridY + original.GridDepth;
+                if (Layout.AddMachine(copy))
+                {
+                    SelectedMachine = copy;
+                    StatusText = $"Duplicated {copy.DisplayName}";
+                    UpdateStats();
+                    OnPropertyChanged(nameof(Layout));
+                }
+                else
+                {
+                    StatusText = "Cannot duplicate: no space available.";
+                }
+            }
+        }
+
+        [RelayCommand]
         private void ClearLayout()
         {
             Layout.Clear();
