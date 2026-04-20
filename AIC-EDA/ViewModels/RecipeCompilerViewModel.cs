@@ -115,6 +115,15 @@ namespace AIC_EDA.ViewModels
         }
 
         [RelayCommand]
+        private void SendToLayoutDesigner()
+        {
+            if (App.MainWindow is MainWindow main)
+            {
+                main.NavigateToPage("LayoutDesigner");
+            }
+        }
+
+        [RelayCommand]
         private void DetectBottlenecks()
         {
             if (CompiledGraph == null) return;

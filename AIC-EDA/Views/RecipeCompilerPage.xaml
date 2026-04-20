@@ -83,6 +83,7 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
             <ComboBox Grid.Column="0"
@@ -121,6 +122,13 @@
                     Content="Bottleneck"
                     Command="{x:Bind ViewModel.DetectBottlenecksCommand}"
                     Style="{StaticResource EndfieldOutlineButtonStyle}"
+                    VerticalAlignment="Bottom"
+                    Margin="0,0,8,0"/>
+
+            <Button Grid.Column="5"
+                    Content="Layout Designer"
+                    Command="{x:Bind ViewModel.SendToLayoutDesignerCommand}"
+                    Style="{StaticResource EndfieldAccentButtonStyle}"
                     VerticalAlignment="Bottom"/>
         </Grid>
 
