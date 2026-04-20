@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Dark background gradient -->
+    <radialGradient id="bgGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#1a1a1a"/>
+      <stop offset="100%" stop-color="#0D0D0D"/>
+    </radialGradient>
+    <!-- Lemon yellow glow -->
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <!-- Stronger glow for accent -->
+    <filter id="glowStrong" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="url(#bgGrad)"/>
+
+  <!-- Outer hexagon frame (chip package style) -->
+  <polygon points="256,36 446,146 446,366 256,476 66,366 66,146"
+           fill="none" stroke="#2a2a2a" stroke-width="3"/>
+
+  <!-- Inner hexagon frame -->
+  <polygon points="256,56 426,156 426,356 256,456 86,356 86,156"
+           fill="none" stroke="#FFD600" stroke-width="2" opacity="0.4"/>
+
+  <!-- Circuit traces (routing lines) -->
+  <g stroke="#FFD600" stroke-width="2" fill="none" opacity="0.5">
+    <!-- Left traces -->
+    <polyline points="66,200 100,200 120,180 140,180 160,200 200,200"/>
+    <polyline points="66,240 90,240 110,260 150,260 180,240 200,240"/>
+    <polyline points="66,280 80,280 100,300 130,300 160,280 200,280"/>
+    <!-- Right traces -->
+    <polyline points="446,200 412,200 392,180 372,180 352,200 312,200"/>
+    <polyline points="446,240 422,240 402,260 362,260 332,240 312,240"/>
+    <polyline points="446,280 432,280 412,300 382,300 352,280 312,280"/>
+  </g>
+
+  <!-- Pin dots on hexagon edges -->
+  <g fill="#FFD600" opacity="0.6">
+    <!-- Left pins -->
+    <circle cx="66" cy="180" r="3"/>
+    <circle cx="66" cy="220" r="3"/>
+    <circle cx="66" cy="260" r="3"/>
+    <circle cx="66" cy="300" r="3"/>
+    <circle cx="66" cy="340" r="3"/>
+    <!-- Right pins -->
+    <circle cx="446" cy="180" r="3"/>
+    <circle cx="446" cy="220" r="3"/>
+    <circle cx="446" cy="260" r="3"/>
+    <circle cx="446" cy="300" r="3"/>
+    <circle cx="446" cy="340" r="3"/>
+  </g>
+
+  <!-- Central chip die (square with rounded corners) -->
+  <rect x="156" y="156" width="200" height="200" rx="16" ry="16"
+        fill="#141414" stroke="#FFD600" stroke-width="3" filter="url(#glow)"/>
+
+  <!-- Grid pattern inside chip -->
+  <g stroke="#FFD600" stroke-width="0.8" opacity="0.15">
+    <line x1="196" y1="156" x2="196" y2="356"/>
+    <line x1="236" y1="156" x2="236" y2="356"/>
+    <line x1="276" y1="156" x2="276" y2="356"/>
+    <line x1="316" y1="156" x2="316" y2="356"/>
+    <line x1="156" y1="196" x2="356" y2="196"/>
+    <line x1="156" y1="236" x2="356" y2="236"/>
+    <line x1="156" y1="276" x2="356" y2="276"/>
+    <line x1="156" y1="316" x2="356" y2="316"/>
+  </g>
+
+  <!-- Central gear icon (industry + mechanism) -->
+  <g transform="translate(256, 248)">
+    <!-- Gear outer -->
+    <circle cx="0" cy="0" r="44" fill="none" stroke="#FFD600" stroke-width="3" filter="url(#glowStrong)"/>
+    <!-- Gear teeth -->
+    <g stroke="#FFD600" stroke-width="6" stroke-linecap="round">
+      <line x1="0" y1="-52" x2="0" y2="-40"/>
+      <line x1="0" y1="52" x2="0" y2="40"/>
+      <line x1="-52" y1="0" x2="-40" y2="0"/>
+      <line x1="52" y1="0" x2="40" y2="0"/>
+      <line x1="-37" y1="-37" x2="-28" y2="-28"/>
+      <line x1="37" y1="37" x2="28" y2="28"/>
+      <line x1="-37" y1="37" x2="-28" y2="28"/>
+      <line x1="37" y1="-37" x2="28" y2="-28"/>
+    </g>
+    <!-- Inner circle -->
+    <circle cx="0" cy="0" r="20" fill="#FFD600" opacity="0.9"/>
+    <circle cx="0" cy="0" r="12" fill="#0D0D0D"/>
+    <!-- Center dot -->
+    <circle cx="0" cy="0" r="5" fill="#FFD600"/>
+  </g>
+
+  <!-- AIC-EDA text -->
+  <g font-family="Consolas, 'Courier New', monospace" text-anchor="middle">
+    <!-- AIC -->
+    <text x="256" y="340" font-size="28" font-weight="bold" fill="#FFD600" letter-spacing="6">AIC</text>
+    <!-- Divider line -->
+    <line x1="196" y1="352" x2="316" y2="352" stroke="#FFD600" stroke-width="1.5" opacity="0.6"/>
+    <!-- EDA -->
+    <text x="256" y="376" font-size="22" font-weight="bold" fill="#FFD600" letter-spacing="8" opacity="0.9">EDA</text>
+  </g>
+
+  <!-- Corner brackets (bracket tag style) -->
+  <g stroke="#FFD600" stroke-width="2" fill="none" opacity="0.5">
+    <!-- Top left -->
+    <polyline points="176,176 176,192 192,192"/>
+    <!-- Top right -->
+    <polyline points="320,192 336,192 336,176"/>
+    <!-- Bottom left -->
+    <polyline points="176,336 176,320 192,320"/>
+    <!-- Bottom right -->
+    <polyline points="320,320 336,320 336,336"/>
+  </g>
+
+  <!-- Small circuit nodes at intersections -->
+  <g fill="#FFD600" opacity="0.7">
+    <circle cx="196" cy="196" r="2.5"/>
+    <circle cx="316" cy="196" r="2.5"/>
+    <circle cx="196" cy="316" r="2.5"/>
+    <circle cx="316" cy="316" r="2.5"/>
+  </g>
+
+  <!-- Outer ring accent -->
+  <circle cx="256" cy="256" r="232" fill="none" stroke="#FFD600" stroke-width="1" opacity="0.15"/>
+</svg>

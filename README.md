@@ -1,7 +1,7 @@
-# AIC-EDA — 工业自动化布局系统
+# AIC-EDA — 《终末地》集成工业自动布局系统
 
 <p align="center">
-  <img src="docs/assets/logo.png" alt="AIC-EDA Logo" width="120">
+  <img src="docs/assets/logo.svg" alt="AIC-EDA Logo" width="120">
 </p>
 
 <p align="center">
