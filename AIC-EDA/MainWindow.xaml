@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="AIC_EDA.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AIC_EDA"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="AIC-EDA">
+
+    <Window.SystemBackdrop>
+        <MicaBackdrop />
+    </Window.SystemBackdrop>
+
+    <Grid>
+        <NavigationView x:Name="NavView"
+                        IsBackButtonVisible="Collapsed"
+                        PaneDisplayMode="Left"
+                        SelectionChanged="NavView_SelectionChanged"
+                        Loaded="NavView_Loaded">
+            <NavigationView.MenuItems>
+                <NavigationViewItem Icon="Library" Content="配方浏览器" Tag="RecipeBrowser" />
+                <NavigationViewItem Icon="Repair" Content="Recipe Compiler" Tag="RecipeCompiler" />
+                <NavigationViewItem Icon="MapPin" Content="布局预览" Tag="LayoutPreview" />
+                <NavigationViewItem Icon="Share" Content="蓝图导出" Tag="BlueprintExport" />
+            </NavigationView.MenuItems>
+
+            <NavigationView.PaneHeader>
+                <TextBlock Text="AIC-EDA" 
+                           Style="{StaticResource TitleTextBlockStyle}" 
+                           Margin="16,8"/>
+            </NavigationView.PaneHeader>
+
+            <NavigationView.PaneFooter>
+                <StackPanel Margin="16,8" Spacing="4">
+                    <TextBlock Text="Automated Industry Complex" 
+                               FontSize="10" Opacity="0.5"/>
+                    <TextBlock Text="Electronic Design Automation" 
+                               FontSize="10" Opacity="0.5"/>
+                </StackPanel>
+            </NavigationView.PaneFooter>
+
+            <Frame x:Name="ContentFrame"
+                   Margin="8"
+                   CornerRadius="8"/>
+        </NavigationView>
+    </Grid>
+</Window>

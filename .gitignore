@@ -1,0 +1,59 @@
+## Visual Studio
+.vs/
+*.user
+*.userosscache
+*.suo
+*.cache
+*.ilk
+*.pdb
+*.obj
+*.exe
+*.dll
+*.lib
+*.exp
+*.iobj
+*.ipdb
+
+## Build outputs
+bin/
+obj/
+out/
+publish/
+artifacts/
+
+## WinUI 3 / MSIX
+AppPackages/
+BundleArtifacts/
+Packages/
+*_Test/
+*.appx
+*.appxbundle
+*.msix
+*.msixbundle
+*.pri
+
+## .NET
+project.lock.json
+project.fragment.lock.json
+
+## NuGet
+*.nupkg
+*.snupkg
+nuget.exe
+
+## Rider / IDEA
+.idea/
+*.iml
+
+## OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+## Logs
+*.log
+
+## Temporary files
+*.tmp
+*.temp
+~$*

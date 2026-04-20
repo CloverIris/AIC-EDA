@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "AIC-EDA (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "AIC-EDA (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
