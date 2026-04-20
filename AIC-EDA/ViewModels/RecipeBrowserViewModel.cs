@@ -42,6 +42,12 @@ namespace AIC_EDA.ViewModels
             }
 
             LoadData();
+
+            // Auto-select first item to populate recipe lists
+            if (Items.Count > 0)
+            {
+                SelectedItem = Items[0];
+            }
         }
 
         private void LoadData()
@@ -57,6 +63,11 @@ namespace AIC_EDA.ViewModels
                 ItemRecipes = new ObservableCollection<Recipe>(_db.FindRecipesByOutput(value.Id));
                 ItemUsages = new ObservableCollection<Recipe>(_db.FindRecipesByInput(value.Id));
             }
+            else
+            {
+                ItemRecipes = new ObservableCollection<Recipe>();
+                ItemUsages = new ObservableCollection<Recipe>();
+            }
         }
 
         partial void OnSearchTextChanged(string value)
@@ -64,6 +75,11 @@ namespace AIC_EDA.ViewModels
             if (string.IsNullOrWhiteSpace(value))
             {
                 LoadData();
+                // Re-select first item after reset
+                if (Items.Count > 0 && SelectedItem == null)
+                {
+                    SelectedItem = Items[0];
+                }
                 return;
             }
 
@@ -74,6 +90,12 @@ namespace AIC_EDA.ViewModels
             var filteredRecipes = _db.Recipes.Where(r =>
                 r.Name.Contains(value) || r.Machine.GetDisplayName().Contains(value)).ToList();
             Recipes = new ObservableCollection<Recipe>(filteredRecipes);
+
+            // Auto-select first filtered item
+            if (Items.Count > 0)
+            {
+                SelectedItem = Items[0];
+            }
         }
     }
 }

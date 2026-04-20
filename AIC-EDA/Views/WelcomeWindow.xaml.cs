@@ -24,11 +24,30 @@ namespace AIC_EDA.Views
             this.ExtendsContentIntoTitleBar = true;
             this.SetTitleBar(null);
 
-            // Window sizing
+            // Window sizing: larger, centered on screen
             var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
             var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hwnd);
             var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
-            appWindow.Resize(new Windows.Graphics.SizeInt32 { Width = 960, Height = 680 });
+            appWindow.Resize(new Windows.Graphics.SizeInt32 { Width = 1100, Height = 750 });
+
+            // Center on monitor
+            var displayArea = Microsoft.UI.Windowing.DisplayArea.GetFromWindowId(windowId, Microsoft.UI.Windowing.DisplayAreaFallback.Nearest);
+            if (displayArea != null)
+            {
+                var centerX = displayArea.WorkArea.X + (displayArea.WorkArea.Width - 1100) / 2;
+                var centerY = displayArea.WorkArea.Y + (displayArea.WorkArea.Height - 750) / 2;
+                appWindow.Move(new Windows.Graphics.PointInt32 { X = centerX, Y = centerY });
+            }
+
+            // Always on top
+            if (App.MainWindow != null)
+            {
+                var mainHwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
+                var mainWindowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(mainHwnd);
+                var mainAppWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(mainWindowId);
+                // We can't use AppWindow for Z-order, but we can use HWND via P/Invoke
+                // Instead, rely on activating welcome after main
+            }
 
             LoadHardwareInfo();
             LoadRecentProjects();
@@ -39,18 +58,14 @@ namespace AIC_EDA.Views
         {
             try
             {
-                // CPU
                 var cpu = GetCpuInfo();
                 CpuText.Text = cpu;
 
-                // Memory
                 var mem = GetMemoryInfo();
                 MemoryText.Text = mem;
 
-                // GPU (simplified)
                 GpuText.Text = GetGpuInfo();
 
-                // OS
                 var os = Environment.OSVersion;
                 OsText.Text = $"Windows {os.Version.Major}.{os.Version.Minor} ({(Environment.Is64BitOperatingSystem ? "x64" : "x86")})";
             }
@@ -67,7 +82,6 @@ namespace AIC_EDA.Views
         {
             try
             {
-                // Try WMI via PowerShell or registry
                 using var key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(
                     @"HARDWARE\DESCRIPTION\System\CentralProcessor\0");
                 if (key != null)
@@ -140,7 +154,7 @@ namespace AIC_EDA.Views
         [System.Runtime.InteropServices.DllImport("kernel32.dll")]
         private static extern bool GlobalMemoryStatusEx(ref MEMORYSTATUSEX lpBuffer);
 
-        private async void LoadProducts()
+        private void LoadProducts()
         {
             try
             {
@@ -195,13 +209,11 @@ namespace AIC_EDA.Views
             var selectedItem = TargetProductCombo.SelectedItem as Item;
             if (selectedItem == null)
             {
-                // Show some error indicator
                 return;
             }
 
             double rate = TargetRateBox.Value;
 
-            // Create a basic graph
             var graph = new ProductionGraph
             {
                 TargetItem = selectedItem.Name,
@@ -209,22 +221,18 @@ namespace AIC_EDA.Views
             };
 
             App.CurrentGraph = graph;
-            App.OpenMainWindow();
             App.CloseWelcomeWindow();
         }
 
         private void OpenExistingBtn_Click(object sender, RoutedEventArgs e)
         {
             SaveStartupPreference();
-            // TODO: Implement file picker to open existing project
-            App.OpenMainWindow();
             App.CloseWelcomeWindow();
         }
 
         private void SkipBtn_Click(object sender, RoutedEventArgs e)
         {
             SaveStartupPreference();
-            App.OpenMainWindow();
             App.CloseWelcomeWindow();
         }
 
@@ -233,8 +241,6 @@ namespace AIC_EDA.Views
             if (RecentProjectsList.SelectedItem is RecentProject project)
             {
                 SaveStartupPreference();
-                // TODO: Load the project
-                App.OpenMainWindow();
                 App.CloseWelcomeWindow();
             }
         }

@@ -33,12 +33,13 @@ namespace AIC_EDA.Models
 
         /// <summary>
         /// UI category color for the Endfield theme
+        /// Lemon yellow = primary accent, cyan = fluid/tech, green = final/success
         /// </summary>
         public Color CategoryColor => Category switch
         {
             ItemCategory.RawMaterial => Color.FromArgb(255, 158, 158, 158),      // Gray
-            ItemCategory.Intermediate => Color.FromArgb(255, 255, 214, 0),       // Yellow
-            ItemCategory.FinalProduct => Color.FromArgb(255, 57, 255, 20),       // Endfield Green
+            ItemCategory.Intermediate => Color.FromArgb(255, 255, 214, 0),       // Lemon Yellow
+            ItemCategory.FinalProduct => Color.FromArgb(255, 57, 255, 20),       // Green (success)
             ItemCategory.Fluid => Color.FromArgb(255, 0, 229, 255),              // Cyan
             ItemCategory.Special => Color.FromArgb(255, 255, 109, 0),            // Orange
             _ => Color.FromArgb(255, 128, 128, 128),

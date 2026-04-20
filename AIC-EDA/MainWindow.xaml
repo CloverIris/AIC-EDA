@@ -14,90 +14,234 @@
     </Window.SystemBackdrop>
 
     <Grid Background="{StaticResource SurfaceDarkBrush}">
-        <NavigationView x:Name="NavView"
-                        IsBackButtonVisible="Collapsed"
-                        IsPaneToggleButtonVisible="False"
-                        PaneDisplayMode="LeftCompact"
-                        CompactPaneLength="56"
-                        OpenPaneLength="200"
-                        SelectionChanged="NavView_SelectionChanged"
-                        Loaded="NavView_Loaded"
-                        Background="Transparent"
-                        Style="{StaticResource EndfieldNavigationViewStyle}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-            <!-- Override NavigationView colors for Endfield theme -->
-            <NavigationView.Resources>
-                <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="{StaticResource EndfieldGreen}"/>
-                <SolidColorBrush x:Key="NavigationViewItemBackgroundSelected" Color="{StaticResource EndfieldGreenDim}"/>
-                <SolidColorBrush x:Key="NavigationViewItemBackgroundSelectedPointerOver" Color="{StaticResource EndfieldGreenGlow}"/>
-                <SolidColorBrush x:Key="NavigationViewItemForegroundSelected" Color="{StaticResource EndfieldGreen}"/>
-                <SolidColorBrush x:Key="NavigationViewItemForeground" Color="{StaticResource TextSecondaryColor}"/>
-                <SolidColorBrush x:Key="NavigationViewItemForegroundPointerOver" Color="{StaticResource TextPrimaryColor}"/>
-                <SolidColorBrush x:Key="NavigationViewItemBackgroundPointerOver" Color="{StaticResource SurfaceHoverColor}"/>
-                <SolidColorBrush x:Key="NavigationViewItemBackgroundPressed" Color="{StaticResource SurfacePressedColor}"/>
-                <SolidColorBrush x:Key="NavigationViewPaneBackground" Color="{StaticResource SurfaceDarkColor}"/>
-            </NavigationView.Resources>
+        <!-- ===== TOP MENU BAR ===== -->
+        <MenuBar Grid.Row="0" Background="{StaticResource SurfaceElevatedBrush}">
+            <MenuBarItem Title="File">
+                <MenuFlyoutItem Text="New Project..." Click="MenuNewProject_Click">
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="N" Modifiers="Control"/>
+                    </MenuFlyoutItem.KeyboardAccelerators>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem Text="Open Project..." Click="MenuOpenProject_Click">
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="O" Modifiers="Control"/>
+                    </MenuFlyoutItem.KeyboardAccelerators>
+                </MenuFlyoutItem>
+                <MenuFlyoutSeparator/>
+                <MenuFlyoutItem Text="Save Blueprint" Click="MenuSaveBlueprint_Click">
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="S" Modifiers="Control"/>
+                    </MenuFlyoutItem.KeyboardAccelerators>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem Text="Export JSON..." Click="MenuExportJson_Click"/>
+                <MenuFlyoutSeparator/>
+                <MenuFlyoutItem Text="Exit" Click="MenuExit_Click"/>
+            </MenuBarItem>
 
-            <NavigationView.PaneHeader>
-                <Grid Height="56" Margin="0,8,0,0">
-                    <TextBlock Text="AIC"
-                               FontSize="18"
-                               FontWeight="Bold"
-                               Foreground="{StaticResource AccentGreenBrush}"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Top"/>
-                    <TextBlock Text="EDA"
-                               FontSize="10"
-                               Foreground="{StaticResource TextTertiaryBrush}"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Bottom"
-                               Margin="0,0,0,8"
-                               FontFamily="Consolas"/>
-                </Grid>
-            </NavigationView.PaneHeader>
+            <MenuBarItem Title="Edit">
+                <MenuFlyoutItem Text="Undo" Click="MenuUndo_Click">
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="Z" Modifiers="Control"/>
+                    </MenuFlyoutItem.KeyboardAccelerators>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem Text="Redo" Click="MenuRedo_Click">
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="Y" Modifiers="Control"/>
+                    </MenuFlyoutItem.KeyboardAccelerators>
+                </MenuFlyoutItem>
+                <MenuFlyoutSeparator/>
+                <MenuFlyoutItem Text="Preferences" Click="MenuPreferences_Click"/>
+            </MenuBarItem>
 
-            <NavigationView.MenuItems>
-                <NavigationViewItem Tag="RecipeBrowser" ToolTipService.ToolTip="配方浏览器">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE8F1;" FontSize="18"/>
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem Tag="RecipeCompiler" ToolTipService.ToolTip="RTL Synthesis">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE950;" FontSize="18"/>
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem Tag="LayoutPreview" ToolTipService.ToolTip="FloorPlan">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE80A;" FontSize="18"/>
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem Tag="BlueprintExport" ToolTipService.ToolTip="Tape Deploy">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE8A5;" FontSize="18"/>
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-            </NavigationView.MenuItems>
+            <MenuBarItem Title="View">
+                <MenuFlyoutItem Text="Recipe Browser" Tag="RecipeBrowser" Click="MenuNavigate_Click"/>
+                <MenuFlyoutItem Text="RTL Synthesis" Tag="RecipeCompiler" Click="MenuNavigate_Click"/>
+                <MenuFlyoutItem Text="FloorPlan" Tag="LayoutPreview" Click="MenuNavigate_Click"/>
+                <MenuFlyoutItem Text="Tape Deploy" Tag="BlueprintExport" Click="MenuNavigate_Click"/>
+                <MenuFlyoutSeparator/>
+                <ToggleMenuFlyoutItem Text="Show Right Panel" IsChecked="True" x:Name="ToggleRightPanelMenu" Click="MenuToggleRightPanel_Click"/>
+                <MenuFlyoutItem Text="Reset Layout" Click="MenuResetLayout_Click"/>
+            </MenuBarItem>
 
-            <NavigationView.PaneFooter>
-                <StackPanel Spacing="4" Margin="0,8">
-                    <NavigationViewItem Tag="Settings" ToolTipService.ToolTip="Settings">
+            <MenuBarItem Title="Tools">
+                <MenuFlyoutItem Text="Compile Graph" Click="MenuCompile_Click"/>
+                <MenuFlyoutItem Text="Optimize Layout" Click="MenuOptimize_Click"/>
+                <MenuFlyoutItem Text="Run STA" Click="MenuRunSTA_Click"/>
+                <MenuFlyoutItem Text="Run DRC" Click="MenuRunDRC_Click"/>
+                <MenuFlyoutSeparator/>
+                <MenuFlyoutItem Text="Reload Recipe DB" Click="MenuReloadDB_Click"/>
+            </MenuBarItem>
+
+            <MenuBarItem Title="Help">
+                <MenuFlyoutItem Text="Documentation" Click="MenuDocs_Click"/>
+                <MenuFlyoutItem Text="Keyboard Shortcuts" Click="MenuShortcuts_Click"/>
+                <MenuFlyoutSeparator/>
+                <MenuFlyoutItem Text="About AIC-EDA" Click="MenuAbout_Click"/>
+            </MenuBarItem>
+        </MenuBar>
+
+        <!-- ===== COMMAND BAR / TOOLBAR ===== -->
+        <CommandBar Grid.Row="1"
+                    Background="{StaticResource SurfaceCardBrush}"
+                    DefaultLabelPosition="Right"
+                    HorizontalAlignment="Stretch"
+                    BorderBrush="{StaticResource BorderDefaultBrush}"
+                    BorderThickness="0,0,0,1">
+            <AppBarButton Icon="NewFolder" Label="New" ToolTipService.ToolTip="New Project (Ctrl+N)" Click="MenuNewProject_Click"/>
+            <AppBarButton Icon="OpenFile" Label="Open" ToolTipService.ToolTip="Open Project (Ctrl+O)" Click="MenuOpenProject_Click"/>
+            <AppBarButton Icon="Save" Label="Save" ToolTipService.ToolTip="Save Blueprint (Ctrl+S)" Click="MenuSaveBlueprint_Click"/>
+            <AppBarSeparator/>
+            <AppBarButton Icon="Repair" Label="Compile" ToolTipService.ToolTip="Compile Graph" Click="MenuCompile_Click"/>
+            <AppBarButton Icon="MapPin" Label="Optimize" ToolTipService.ToolTip="Optimize Layout" Click="MenuOptimize_Click"/>
+            <AppBarButton Icon="ZoomIn" Label="Zoom In" ToolTipService.ToolTip="Zoom In" Click="ToolbarZoomIn_Click"/>
+            <AppBarButton Icon="ZoomOut" Label="Zoom Out" ToolTipService.ToolTip="Zoom Out" Click="ToolbarZoomOut_Click"/>
+            <AppBarSeparator/>
+            <AppBarButton Icon="Share" Label="Export" ToolTipService.ToolTip="Export Blueprint" Click="MenuExportJson_Click"/>
+            <CommandBar.Content>
+                <TextBlock Text="AIC-EDA" Margin="12,8" FontWeight="SemiBold" Foreground="{StaticResource AccentYellowBrush}" FontFamily="Consolas"/>
+            </CommandBar.Content>
+        </CommandBar>
+
+        <!-- ===== MAIN CONTENT AREA ===== -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Left Navigation -->
+            <NavigationView x:Name="NavView"
+                            Grid.Column="0"
+                            IsBackButtonVisible="Collapsed"
+                            IsPaneToggleButtonVisible="False"
+                            PaneDisplayMode="LeftCompact"
+                            CompactPaneLength="56"
+                            OpenPaneLength="200"
+                            SelectionChanged="NavView_SelectionChanged"
+                            Loaded="NavView_Loaded"
+                            Background="Transparent"
+                            Style="{StaticResource EndfieldNavigationViewStyle}">
+
+                <NavigationView.Resources>
+                    <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="{StaticResource EndfieldYellow}"/>
+                    <SolidColorBrush x:Key="NavigationViewItemBackgroundSelected" Color="{StaticResource EndfieldYellowDim}"/>
+                    <SolidColorBrush x:Key="NavigationViewItemBackgroundSelectedPointerOver" Color="{StaticResource EndfieldYellowGlow}"/>
+                    <SolidColorBrush x:Key="NavigationViewItemForegroundSelected" Color="{StaticResource EndfieldYellow}"/>
+                    <SolidColorBrush x:Key="NavigationViewItemForeground" Color="{StaticResource TextSecondaryColor}"/>
+                    <SolidColorBrush x:Key="NavigationViewItemForegroundPointerOver" Color="{StaticResource TextPrimaryColor}"/>
+                    <SolidColorBrush x:Key="NavigationViewItemBackgroundPointerOver" Color="{StaticResource SurfaceHoverColor}"/>
+                    <SolidColorBrush x:Key="NavigationViewItemBackgroundPressed" Color="{StaticResource SurfacePressedColor}"/>
+                    <SolidColorBrush x:Key="NavigationViewPaneBackground" Color="{StaticResource SurfaceDarkColor}"/>
+                </NavigationView.Resources>
+
+                <NavigationView.PaneHeader>
+                    <Grid Height="56" Margin="0,8,0,0">
+                        <TextBlock Text="AIC" FontSize="18" FontWeight="Bold" Foreground="{StaticResource AccentYellowBrush}" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                        <TextBlock Text="EDA" FontSize="10" Foreground="{StaticResource TextTertiaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,8" FontFamily="Consolas"/>
+                    </Grid>
+                </NavigationView.PaneHeader>
+
+                <NavigationView.MenuItems>
+                    <NavigationViewItem Tag="RecipeBrowser" ToolTipService.ToolTip="Recipe Browser">
                         <NavigationViewItem.Icon>
-                            <FontIcon Glyph="&#xE713;" FontSize="18"/>
+                            <FontIcon Glyph="&#xE8F1;" FontSize="18"/>
                         </NavigationViewItem.Icon>
                     </NavigationViewItem>
-                    <TextBlock Text="v1.0"
-                               FontSize="9"
-                               Foreground="{StaticResource TextDisabledBrush}"
-                               HorizontalAlignment="Center"
-                               Margin="0,4,0,0"
-                               FontFamily="Consolas"/>
-                </StackPanel>
-            </NavigationView.PaneFooter>
+                    <NavigationViewItem Tag="RecipeCompiler" ToolTipService.ToolTip="RTL Synthesis">
+                        <NavigationViewItem.Icon>
+                            <FontIcon Glyph="&#xE950;" FontSize="18"/>
+                        </NavigationViewItem.Icon>
+                    </NavigationViewItem>
+                    <NavigationViewItem Tag="LayoutPreview" ToolTipService.ToolTip="FloorPlan">
+                        <NavigationViewItem.Icon>
+                            <FontIcon Glyph="&#xE80A;" FontSize="18"/>
+                        </NavigationViewItem.Icon>
+                    </NavigationViewItem>
+                    <NavigationViewItem Tag="BlueprintExport" ToolTipService.ToolTip="Tape Deploy">
+                        <NavigationViewItem.Icon>
+                            <FontIcon Glyph="&#xE8A5;" FontSize="18"/>
+                        </NavigationViewItem.Icon>
+                    </NavigationViewItem>
+                </NavigationView.MenuItems>
 
-            <Frame x:Name="ContentFrame"
-                   Background="{StaticResource SurfaceDarkBrush}"
-                   NavigationFailed="ContentFrame_NavigationFailed"/>
-        </NavigationView>
+                <NavigationView.PaneFooter>
+                    <StackPanel Spacing="4" Margin="0,8">
+                        <NavigationViewItem Tag="Settings" ToolTipService.ToolTip="Settings">
+                            <NavigationViewItem.Icon>
+                                <FontIcon Glyph="&#xE713;" FontSize="18"/>
+                            </NavigationViewItem.Icon>
+                        </NavigationViewItem>
+                        <TextBlock Text="v1.0" FontSize="9" Foreground="{StaticResource TextDisabledBrush}" HorizontalAlignment="Center" Margin="0,4,0,0" FontFamily="Consolas"/>
+                    </StackPanel>
+                </NavigationView.PaneFooter>
+
+                <Frame x:Name="ContentFrame"
+                       Background="{StaticResource SurfaceDarkBrush}"
+                       NavigationFailed="ContentFrame_NavigationFailed"/>
+            </NavigationView>
+
+            <!-- ===== RIGHT TOOL PANEL ===== -->
+            <Grid x:Name="RightToolPanel"
+                  Grid.Column="2"
+                  Width="260"
+                  Background="{StaticResource SurfaceCardBrush}"
+                  BorderBrush="{StaticResource BorderDefaultBrush}"
+                  BorderThickness="1,0,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Panel Header -->
+                <Border Grid.Row="0" Background="{StaticResource SurfaceElevatedBrush}" Padding="12,8">
+                    <TextBlock Text="PROJECT INFO" Style="{StaticResource CaptionLabelStyle}" VerticalAlignment="Center"/>
+                </Border>
+
+                <!-- Quick Stats -->
+                <StackPanel Grid.Row="1" Spacing="8" Padding="12">
+                    <StackPanel Spacing="2">
+                        <TextBlock Text="TARGET" Style="{StaticResource CaptionLabelStyle}"/>
+                        <TextBlock x:Name="TargetItemText" Text="-" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
+                    </StackPanel>
+                    <StackPanel Spacing="2">
+                        <TextBlock Text="RATE" Style="{StaticResource CaptionLabelStyle}"/>
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <TextBlock x:Name="TargetRateText" Text="-" FontSize="13" Foreground="{StaticResource AccentCyanBrush}" FontWeight="SemiBold"/>
+                            <TextBlock Text="/min" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel Spacing="2">
+                        <TextBlock Text="DEVICES" Style="{StaticResource CaptionLabelStyle}"/>
+                        <TextBlock x:Name="DeviceCountText" Text="-" FontSize="13" Foreground="{StaticResource AccentYellowBrush}" FontWeight="SemiBold"/>
+                    </StackPanel>
+                    <StackPanel Spacing="2">
+                        <TextBlock Text="POWER" Style="{StaticResource CaptionLabelStyle}"/>
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <TextBlock x:Name="PowerText" Text="-" FontSize="13" Foreground="{StaticResource AccentOrangeBrush}" FontWeight="SemiBold"/>
+                            <TextBlock Text="kW" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+
+                <Border Grid.Row="2" Height="1" Background="{StaticResource BorderDefaultBrush}"/>
+
+                <!-- Mini Navigation / Quick Actions -->
+                <StackPanel Grid.Row="3" Spacing="4" Padding="12">
+                    <TextBlock Text="QUICK ACTIONS" Style="{StaticResource CaptionLabelStyle}" Margin="0,0,0,8"/>
+                    <Button Content="Compile Graph" Style="{StaticResource EndfieldOutlineButtonStyle}" HorizontalAlignment="Stretch" Click="MenuCompile_Click"/>
+                    <Button Content="Run Layout" Style="{StaticResource EndfieldOutlineButtonStyle}" HorizontalAlignment="Stretch" Click="MenuOptimize_Click"/>
+                    <Button Content="Export Blueprint" Style="{StaticResource EndfieldOutlineButtonStyle}" HorizontalAlignment="Stretch" Click="MenuExportJson_Click"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
     </Grid>
 </Window>

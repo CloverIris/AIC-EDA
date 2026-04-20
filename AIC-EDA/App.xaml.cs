@@ -20,7 +20,11 @@ namespace AIC_EDA
 
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
-            // Check if user wants to skip welcome screen
+            // Always create main window first
+            MainWindow = new MainWindow();
+            MainWindow.Activate();
+
+            // Check if user wants to show welcome screen
             var settings = ApplicationData.Current.LocalSettings;
             bool showWelcome = true;
             if (settings.Values.TryGetValue("ShowWelcomeScreen", out object? val) && val is bool b)
@@ -33,19 +37,6 @@ namespace AIC_EDA
                 WelcomeWindow = new WelcomeWindow();
                 WelcomeWindow.Activate();
             }
-            else
-            {
-                OpenMainWindow();
-            }
-        }
-
-        public static void OpenMainWindow()
-        {
-            if (MainWindow == null)
-            {
-                MainWindow = new MainWindow();
-            }
-            MainWindow.Activate();
         }
 
         public static void CloseWelcomeWindow()
