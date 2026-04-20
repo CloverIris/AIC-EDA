@@ -125,7 +125,8 @@ namespace AIC_EDA.Views
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"[LayoutDesigner] Redraw error: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"[LayoutDesigner] Redraw error: {ex.Message}\n{ex.StackTrace}");
+                StatusTextBlock.Text = $"Render error: {ex.Message}";
                 FlashErrorWarning();
             }
         }
@@ -253,60 +254,70 @@ namespace AIC_EDA.Views
             double isoH = cell * 0.5;
 
             var (minGx, minGy, maxGx, maxGy) = GetGridBounds(padding: 8);
-            int gw = maxGx - minGx;
-            int gh = maxGy - minGy;
 
-            double centerX = _panOffset.X + (minGx + maxGx) * isoW * 0.5;
-            double originY = _panOffset.Y + minGy * isoH;
+            // Use global center (same as machine drawing) so grid aligns with placed machines
+            double centerX = _panOffset.X + CanvasGridW * isoW * 0.5;
+            double originY = _panOffset.Y;
 
             // Dim grid brushes
             var gridBrush = new SolidColorBrush(Color.FromArgb(0x18, 0xFF, 0xFF, 0xFF));
             var majorGridBrush = new SolidColorBrush(Color.FromArgb(0x30, 0xFF, 0xFF, 0xFF));
-            var dashPattern = new DoubleCollection { 2, 4 };
 
-            // Diagonal lines (\\ direction) — only within bounds
-            for (int i = -gh; i <= gw; i++)
+            // Limit diagonal line indices to machine area to avoid cage effect
+            int iMin1 = minGx - maxGy;
+            int iMax1 = maxGx - minGy;
+            int iMin2 = minGx + minGy;
+            int iMax2 = maxGx + maxGy;
+
+            // Diagonal lines (\\ direction) — x - y = constant
+            for (int i = iMin1; i <= iMax1; i++)
             {
                 double x1 = centerX + i * isoW * 0.5;
                 double y1 = originY + Math.Max(0, -i) * isoH * 0.5;
-                double x2 = centerX + (i + gh) * isoW * 0.5;
-                double y2 = originY + gh * isoH * 0.5 + Math.Min(0, -i) * isoH * 0.5;
+                double x2 = centerX + (i + CanvasGridH) * isoW * 0.5;
+                double y2 = originY + CanvasGridH * isoH * 0.5 + Math.Min(0, -i) * isoH * 0.5;
 
                 var line = new Line
                 {
                     X1 = x1, Y1 = y1, X2 = x2, Y2 = y2,
                     Stroke = (i % 5 == 0) ? majorGridBrush : gridBrush,
                     StrokeThickness = (i % 5 == 0) ? 1.0 : 0.5,
-                    StrokeDashArray = dashPattern,
+                    StrokeDashArray = new DoubleCollection { 2, 4 },
                 };
                 DesignCanvas.Children.Add(line);
             }
 
-            // Diagonal lines (// direction)
-            for (int i = 0; i <= gw + gh; i++)
+            // Diagonal lines (// direction) — x + y = constant
+            for (int i = iMin2; i <= iMax2; i++)
             {
-                double x1 = centerX + (i - gh) * isoW * 0.5;
-                double y1 = originY + Math.Max(0, gh - i) * isoH * 0.5;
+                double x1 = centerX + (i - CanvasGridH) * isoW * 0.5;
+                double y1 = originY + Math.Max(0, CanvasGridH - i) * isoH * 0.5;
                 double x2 = centerX + i * isoW * 0.5;
-                double y2 = originY + Math.Min(gh, i) * isoH * 0.5;
+                double y2 = originY + Math.Min(CanvasGridH, i) * isoH * 0.5;
 
                 var line = new Line
                 {
                     X1 = x1, Y1 = y1, X2 = x2, Y2 = y2,
                     Stroke = (i % 5 == 0) ? majorGridBrush : gridBrush,
                     StrokeThickness = (i % 5 == 0) ? 1.0 : 0.5,
-                    StrokeDashArray = dashPattern,
+                    StrokeDashArray = new DoubleCollection { 2, 4 },
                 };
                 DesignCanvas.Children.Add(line);
             }
 
-            // Border diamond (limited to bounds)
+            // Border diamond (around machine area)
+            double borderLeftX = centerX + (minGx - maxGy) * isoW * 0.5;
+            double borderRightX = centerX + (maxGx - minGy) * isoW * 0.5;
+            double borderTopY = originY + (minGx + minGy) * isoH * 0.5;
+            double borderBottomY = originY + (maxGx + maxGy) * isoH * 0.5;
+            double borderMidX = (borderLeftX + borderRightX) * 0.5;
+
             var borderPoints = new PointCollection
             {
-                new Point(centerX, originY),
-                new Point(centerX + gw * isoW * 0.5, originY + gh * isoH * 0.5),
-                new Point(centerX, originY + gh * isoH),
-                new Point(centerX - gw * isoW * 0.5, originY + gh * isoH * 0.5),
+                new Point(borderMidX, borderTopY),
+                new Point(borderRightX, (borderTopY + borderBottomY) * 0.5),
+                new Point(borderMidX, borderBottomY),
+                new Point(borderLeftX, (borderTopY + borderBottomY) * 0.5),
             };
             var border = new Polygon
             {
