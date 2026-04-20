@@ -45,6 +45,32 @@ namespace AIC_EDA.Models
             _ => Color.FromArgb(255, 128, 128, 128),
         };
 
+        /// <summary>
+        /// Segoe Fluent Icons glyph for this item category
+        /// </summary>
+        public string IconGlyph => Category switch
+        {
+            ItemCategory.RawMaterial => "\uE7C1",    // World (ore/earth)
+            ItemCategory.Intermediate => "\uE950",   // Repair (parts/components)
+            ItemCategory.FinalProduct => "\uE74E",   // Package (finished goods)
+            ItemCategory.Fluid => "\uE90B",          // Water (fluids)
+            ItemCategory.Special => "\uE7C3",       // Admin (special/power)
+            _ => "\uE71B",                           // Unknown
+        };
+
+        /// <summary>
+        /// Short display label for category filter chips
+        /// </summary>
+        public string CategoryLabel => Category switch
+        {
+            ItemCategory.RawMaterial => "原料",
+            ItemCategory.Intermediate => "中间",
+            ItemCategory.FinalProduct => "成品",
+            ItemCategory.Fluid => "流体",
+            ItemCategory.Special => "特殊",
+            _ => "其他",
+        };
+
         public Item() { }
 
         public Item(string id, string name, string nameEN, ItemCategory category)

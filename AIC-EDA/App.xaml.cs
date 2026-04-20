@@ -9,7 +9,7 @@ namespace AIC_EDA
     public partial class App : Application
     {
         public static ProductionGraph? CurrentGraph { get; set; }
-        public static Window? MainWindow { get; private set; }
+        public static MainWindow? MainWindow { get; private set; }
         public static Window? WelcomeWindow { get; private set; }
 
         public App()

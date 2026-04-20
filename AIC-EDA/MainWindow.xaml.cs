@@ -29,7 +29,7 @@ namespace AIC_EDA
             }
         }
 
-        private void NavigateToPage(string tag)
+        public void NavigateToPage(string tag)
         {
             switch (tag)
             {

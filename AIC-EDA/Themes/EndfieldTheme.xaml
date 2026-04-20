@@ -251,4 +251,45 @@
         <Setter Property="CornerRadius" Value="4"/>
     </Style>
 
+    <!-- ========== GRID VIEW (Recipe Card Grid) ========== -->
+    <Style x:Key="EndfieldGridViewStyle" TargetType="GridView">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <ItemsWrapGrid Orientation="Horizontal" MaximumRowsOrColumns="8"/>
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="EndfieldRecipeCardStyle" TargetType="GridViewItem">
+        <Setter Property="Background" Value="{StaticResource SurfaceCardBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BorderDefaultBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Margin" Value="4"/>
+        <Setter Property="Padding" Value="12"/>
+        <Setter Property="Width" Value="120"/>
+        <Setter Property="Height" Value="120"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+    </Style>
+
+    <!-- Filter chip button style -->
+    <Style x:Key="FilterChipStyle" TargetType="Button">
+        <Setter Property="Background" Value="{StaticResource SurfaceCardBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BorderDefaultBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="16"/>
+        <Setter Property="Padding" Value="12,6"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="MinHeight" Value="32"/>
+    </Style>
+
 </ResourceDictionary>
