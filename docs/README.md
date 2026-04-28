@@ -11,6 +11,7 @@
 | [eda-toolchain.md](eda-toolchain.md) | EDA 工具链详解 — 每个模块的算法原理与输入输出 |
 | [recipe-format.md](recipe-format.md) | 配方数据格式 — 物品、配方、设备规格的数据模型 |
 | [changelog.md](changelog.md) | 更新日志 — 版本历史与未来路线图 |
+| [research/](research/README.md) | 研究资料库 — 终末地 AIC 数据源、蓝图、EDA/求解器参考 |
 
 ## 快速链接
 
